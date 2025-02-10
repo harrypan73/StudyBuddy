@@ -12,6 +12,7 @@ router.post('/signup', [
     check('email', 'Please enter a valid email').isEmail(),
     check('password', 'Please enter a password with 6 or more characters').isLength({ min: 6 })
 ], async (req, res) => {
+    console.log("Attempting to sign up user with email: ", req.body.email);
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
@@ -28,6 +29,7 @@ router.post('/signup', [
         const token = jwt.sign({ id: newUser.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
         res.json({ token, user: { id: newUser.id, username: newUser.username, email: newUser.email } });
+        console.log("User signed up successfully");
     } catch (err) {
         res.status(500).json({ message: 'Server error', error: err.message });
     }
@@ -38,6 +40,7 @@ router.post('/login', [
     check('email', 'Please enter a valid email').isEmail(),
     check('password', 'Please enter a password').exists()
 ], async (req, res) => {
+    console.log("Attempting to log into user with email: ", req.body.email);
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
@@ -57,6 +60,7 @@ router.post('/login', [
 
         const token = jwt.sign({ id: user.id}, process.env.JWT_SECRET, { expiresIn: '1h' });
         res.json({ token, user: {id: user.id, username: user.username, email: user.email } });
+        console.log("User logged in successfully");
     } catch (err) {
         res.status(500).json({ message: 'Server error' });
     }

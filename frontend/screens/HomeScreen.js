@@ -1,11 +1,27 @@
-import React from 'react';
-import { View, Text, Button, StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import { Alert, Button, StyleSheet, Text, TextInput, View } from 'react-native';
+import { useDispatch } from 'react-redux';
+import { logoutUser } from '../redux/authSlice';
 
 export default function HomeScreen({ navigation }) {
+    const dispatch = useDispatch();
+
+    const handleLogout = () => {
+        // Log the user out and navigate to the Login screen
+        dispatch(logoutUser())
+            .then(() => {
+                navigation.navigate('Login');
+            })
+            .catch((err) => {
+                console.error(err);
+                Alert.alert('Error', 'Logout failed, please try again');
+            })
+    }
+
     return (
         <View style = { styles.container }>
             <Text>Home Screen</Text>
-            <Button title = "Log Out" onPress = {() => navigation.navigate('Login')} />
+            <Button title = "Log Out" onPress = {handleLogout} />
         </View>
     );
 }

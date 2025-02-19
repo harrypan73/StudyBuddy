@@ -7,11 +7,16 @@ export default function SignupScreen({ navigation }) {
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
     const dispatch = useDispatch();
 
     const handleSignup = () => {
         if (!username || !email || !password) {
             Alert.alert('Error', 'Please fill in all fields');
+            return;
+        }
+        if (password !== confirmPassword) {
+            Alert.alert('Error', 'Passwords do not match');
             return;
         }
         // Sign the user up and navigate to the Home screen
@@ -46,6 +51,13 @@ export default function SignupScreen({ navigation }) {
                 placeholder = "Password"
                 value = { password }
                 onChangeText = { setPassword }
+                secureTextEntry
+            />
+            <TextInput
+                style = { styles.input }
+                placeholder = "Confirm Password"
+                value = { confirmPassword }
+                onChangeText = { setConfirmPassword }
                 secureTextEntry
             />
             <Button title = "Register" onPress = {handleSignup} />

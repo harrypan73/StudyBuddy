@@ -27,7 +27,7 @@ export default function SignupScreen({ navigation }) {
             })
             .catch((err) => {
                 console.error(err);
-                Alert.alert('Error', 'Signup failed, please try again');
+                Alert.alert('Error', err.message);
             });
     }
 

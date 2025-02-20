@@ -8,14 +8,15 @@ const router = express.Router();
 
 // Sign up
 router.post('/signup', [
-    check('username', 'Please enter a username').not().isEmpty(),
+    check('username', 'Please enter a username').custom(value => value.trim()).not().isEmpty(),
     check('email', 'Please enter a valid email').isEmail(),
     check('password', 'Please enter a password with 6 or more characters').isLength({ min: 6 })
 ], async (req, res) => {
     console.log("Attempting to sign up user with email: ", req.body.email);
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+        console.log("Error: ", errors.errors[0].msg);
+        return res.status(400).json({ message: errors.errors[0].msg });
     }
 
     const { username, email, password } = req.body;
@@ -38,11 +39,13 @@ router.post('/signup', [
 // Log in
 router.post('/login', [
     check('email', 'Please enter a valid email').isEmail(),
+    check('password', 'Please enter a password').not().isEmpty()
 ], async (req, res) => {
     console.log("Attempting to log into user with email: ", req.body.email);
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        return res.status(400).json({ message: 'Invalid email format' });
+        console.log("Error: ", errors.errors[0].msg);
+        return res.status(400).json({ message: errors.errors[0].msg });
     }
 
     const { email, password } = req.body;

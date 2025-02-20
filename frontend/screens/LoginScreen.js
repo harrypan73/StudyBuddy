@@ -21,7 +21,7 @@ export default function LoginScreen({ navigation }) {
             })
             .catch((err) => {
                 console.error(err);
-                Alert.alert('Error', 'Login failed, please try again');
+                Alert.alert('Error', err.message);
             });
     }
 

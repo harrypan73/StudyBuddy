@@ -43,19 +43,19 @@ router.post('/login', [
     console.log("Attempting to log into user with email: ", req.body.email);
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+        return res.status(400).json({ message: 'Invalid email format' });
     }
 
     const { email, password } = req.body;
     try {
         const user = await getUserByEmail(email);
         if (!user) {
-            return res.status(400).json({ message: 'Invalid credentials' });
+            return res.status(400).json({ message: 'Unregistered email' });
         }
 
         const passwordsMatch = await bcrypt.compare(password, user.password);
         if (!passwordsMatch) {
-            return res.status(400).json({ message: 'Invalid credentials' });
+            return res.status(400).json({ message: 'Incorrect password' });
         }
 
         const token = jwt.sign({ id: user.id}, process.env.JWT_SECRET, { expiresIn: '1h' });

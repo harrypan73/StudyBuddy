@@ -29,7 +29,13 @@ export const loginUser = (email, password) => async dispatch => {
         await AsyncStorage.setItem('token', token);
         dispatch(loginSuccess({ token, user }));
     } catch (err) {
-        console.error(err);
+        console.error("Error logging in: ", err);
+
+        if (err.response && err.response.data && err.response.data.message) {
+            throw new Error(err.response.data.message);
+        } else {
+            throw new Error("Login failed, please try again");
+        }
     }
 };
 

@@ -107,6 +107,7 @@ export default function SignupScreen({ navigation }) {
             />
             <Button
                 style = { styles.createAccountButton }
+                contentStyle = {{ height: 60 }}
                 labelStyle = {{ fontSize: 20 }}
                 mode = "contained"
                 onPress = { handleSignup }
@@ -115,6 +116,7 @@ export default function SignupScreen({ navigation }) {
             </Button>
             <Button
                 style = { styles.loginButton }
+                contentStyle = {{ height: 60 }}
                 labelStyle = {{ fontSize: 20 }}
                 mode = "contained"
                 onPress = {() => navigation.navigate('Login')}
@@ -148,7 +150,6 @@ const styles = StyleSheet.create({
     },
     createAccountButton: {
         width: '100%',
-        height: 60,
         justifyContent: 'center',
         backgroundColor: '#2563EB',
         marginTop: 6,
@@ -157,7 +158,6 @@ const styles = StyleSheet.create({
     },
     loginButton: {
         width: '100%',
-        height: 60,
         justifyContent: 'center',
         backgroundColor: '#334155',
         marginTop: 6,

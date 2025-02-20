@@ -70,6 +70,7 @@ export default function LoginScreen({ navigation }) {
             />
             <Button 
                 style = { styles.loginButton }
+                contentStyle = {{ height: 60 }}
                 labelStyle = {{ fontSize: 20 }}
                 mode = "contained"
                 onPress = {handleLogin} 
@@ -78,6 +79,7 @@ export default function LoginScreen({ navigation }) {
             </Button>
             <Button
                 style = { styles.signupButton }
+                contentStyle = {{ height: 60 }}
                 labelStyle = {{ fontSize: 20 }}
                 mode = "contained"
                 onPress = {() => navigation.navigate('Signup')}
@@ -111,7 +113,6 @@ const styles = StyleSheet.create({
     },
     loginButton: {
         width: '100%',
-        height: 60,
         justifyContent: 'center',
         backgroundColor: '#2563EB',
         marginTop: 6,
@@ -120,7 +121,6 @@ const styles = StyleSheet.create({
     },
     signupButton: {
         width: '100%',
-        height: 60,
         justifyContent: 'center',
         backgroundColor: '#334155',
         marginTop: 6,

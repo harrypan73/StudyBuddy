@@ -46,7 +46,13 @@ export const signupUser = (username, email, password) => async dispatch => {
         await AsyncStorage.setItem('token', token);
         dispatch(loginSuccess({ token, user }));
     } catch (err) {
-        console.error(err);
+        console.error("Error signing up: ", err);
+
+        if (err.response && err.response.data && err.response.data.message) {
+            throw new Error(err.response.data.message);
+        } else {
+            throw new Error("Signup failed, please try again");
+        }
     }
 }
 

@@ -38,7 +38,6 @@ router.post('/signup', [
 // Log in
 router.post('/login', [
     check('email', 'Please enter a valid email').isEmail(),
-    check('password', 'Please enter a password').exists()
 ], async (req, res) => {
     console.log("Attempting to log into user with email: ", req.body.email);
     const errors = validationResult(req);

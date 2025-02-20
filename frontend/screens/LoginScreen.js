@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Alert, StyleSheet, Text, View } from 'react-native';
-import { TextInput, Button } from 'react-native-paper';
+import { Alert, Image, StyleSheet, Text, View } from 'react-native';
+import { Button, TextInput } from 'react-native-paper';
 import { useDispatch } from 'react-redux';
 import { loginUser } from '../redux/authSlice';
 
@@ -27,7 +27,15 @@ export default function LoginScreen({ navigation }) {
 
     return (
         <View style = { styles.container }>
-            <Text style = { styles.title }>StudyBuddy</Text>
+            <View style = {{ flexDirection: 'row', alignItems: 'center', marginBottom: 20 }} >
+                <Image
+                    style = {{ width: 50, height: 50, marginRight: 15 }}
+                    source = { require('../../assets/icons/StudyBuddyLogo.png') }
+                />
+                <Text style = { styles.title }>
+                    StudyBuddy
+                </Text>
+            </View>
 
             <TextInput
                 style = { styles.input }
@@ -64,16 +72,18 @@ export default function LoginScreen({ navigation }) {
                 style = { styles.loginButton }
                 labelStyle = {{ fontSize: 20 }}
                 mode = "contained"
-                title = "Log In"
                 onPress = {handleLogin} 
-            >Log In</Button>
+            >
+                Log In
+            </Button>
             <Button
                 style = { styles.signupButton }
                 labelStyle = {{ fontSize: 20 }}
                 mode = "contained"
-                title = "Sign Up" 
                 onPress = {() => navigation.navigate('Signup')}
-            >Sign Up</Button>
+            >
+                Sign Up
+            </Button>
         </View>
     );
 }
@@ -87,10 +97,9 @@ const styles = StyleSheet.create({
         padding: 20,
     },
     title: {
-        fontSize: 40,
+        fontSize: 45,
         color: 'white',
         textAlign: 'center',
-        marginBottom: 20,
         fontWeight: 'bold',
     },
     input: {

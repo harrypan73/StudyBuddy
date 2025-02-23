@@ -9,7 +9,7 @@ const StudySessionSchema = new mongoose.Schema({
         lat: { type: Number },
         lng: { type: Number }
     },
-    subject: { type: String },
+    subject: { type: String, required: true },
     buddies: [{ type: Number }], // Array of user IDs
     qualityRating: { type: Number, min: 1, max: 5 },
     notes: { type: String },     // User's notes about the session

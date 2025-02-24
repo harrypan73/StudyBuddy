@@ -1,17 +1,29 @@
-const dotenv = require('dotenv');
-const express = require('express');
 const cors = require('cors');
+const dotenv = require('dotenv').config();
+const express = require('express');
+const mongoose = require('mongoose');
 
-dotenv.config();
+// Routes
+const authRoutes = require('./routes/authRoutes');
+const studySessionRoutes = require('./routes/studySessionRoutes');
+
 const app = express();
-app.use(express.json());
+
 app.use(cors());
+app.use(express.json());
 
 app.get('/', (req, res) => {
     res.send('StudyBuddy API is running');
 });
 
-app.use('/api/auth', require('./routes/authRoutes'));
+// Connect to MongoDB
+mongoose.connect(process.env.MONGODB_URI)
+    .then(() => console.log('MongoDB Connected'))
+    .catch(err => console.log(err));
+
+// Connect routes
+app.use('/api/auth', authRoutes);
+app.use('/api/study-sessions', studySessionRoutes);
 
 const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

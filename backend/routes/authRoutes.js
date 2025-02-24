@@ -32,7 +32,7 @@ router.post('/signup', [
         res.json({ token, user: { id: newUser.id, username: newUser.username, email: newUser.email } });
         console.log("User signed up successfully");
     } catch (err) {
-        res.status(500).json({ message: 'Server error', error: err.message });
+        res.status(500).json({ message: 'Server error' });
     }
 });
 

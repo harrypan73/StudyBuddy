@@ -8,7 +8,7 @@ router.post('/new', authMiddleware, async (req, res) => {
     console.log("Attempting to create a new study session: ", req.body);
     try {
         const session = new StudySession({
-            userId: req.user.id,
+            userId: req.userID,
             ...req.body
         });
         await session.save();
@@ -23,7 +23,7 @@ router.put('/:id', authMiddleware, async (req, res) => {
     console.log("Attempting to update study session with id: ", req.params.id);
     try {
         const session = await StudySession.findOneAndUpdate(
-            { _id: req.params.id, userId: req.user.id },
+            { _id: req.params.id, userId: req.userID },
             req.body,
             { new: true }
         );
@@ -41,7 +41,7 @@ router.delete('/:id', authMiddleware, async (req, res) => {
     console.log("Attempting to delete study session with id: ", req.params.id);
     try {
         const session = await StudySession.findOneAndDelete(
-            { _id: req.params.id, userId: req.user.id }
+            { _id: req.params.id, userId: req.userID }
         );
         if (!session) {
             return res.status(404).json({ message: 'Session not found' });
@@ -56,7 +56,7 @@ router.delete('/:id', authMiddleware, async (req, res) => {
 router.get('/all', authMiddleware, async (req, res) => {
     console.log("Attempting to get all study sessions for user with id: ", req.user.id);
     try {
-        const sessions = await StudySession.find({ userId: req.user.id }).sort({ createdAt: -1 });
+        const sessions = await StudySession.find({ userId: req.userID }).sort({ createdAt: -1 });
         res.json(sessions);
     } catch (err) {
         res.status(500).json({ message: 'Server error' });

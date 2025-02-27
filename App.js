@@ -9,6 +9,8 @@ import { Text } from 'react-native';
 import HomeScreen from './frontend/screens/HomeScreen';
 import LoginScreen from './frontend/screens/LoginScreen';
 import SignupScreen from './frontend/screens/SignupScreen';
+import StartStudySessionScreen from './frontend/screens/StartStudySessionScreen';
+import EndStudySessionScreen from './frontend/screens/EndStudySessionScreen';
 
 const Stack = createStackNavigator();
 
@@ -32,10 +34,13 @@ export default function App() {
   return (
     <Provider store = { store }>
       <NavigationContainer>
-        <Stack.Navigator initialRouteName = { isLoggedIn ? "Home" : "Login" } screenOptions = {{ headerShown: false }}>
+        {/* <Stack.Navigator initialRouteName = { isLoggedIn ? "Home" : "Login" } screenOptions = {{ headerShown: false }}> */}
+        <Stack.Navigator initialRouteName = "EndStudySession" screenOptions = {{ headerShown: false }}>
           <Stack.Screen name = "Home" component = { HomeScreen } />
           <Stack.Screen name = "Login" component = { LoginScreen } />
           <Stack.Screen name = "Signup" component = { SignupScreen } />
+          <Stack.Screen name = "StartStudySession" component = { StartStudySessionScreen } />
+          <Stack.Screen name = "EndStudySession" component = { EndStudySessionScreen } />
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>

@@ -49,14 +49,7 @@ export default function SignupScreen({ navigation }) {
                 mode = "outlined"
                 value = { username }
                 onChangeText = { setUsername }
-                theme = {{
-                    colors: {
-                        outline: 'none',
-                        placeholder: '#747474',
-                        onSurface: 'white',
-                    },
-                    roundness: 12
-                }}
+                theme = { styles.inputTheme }
             />
             <TextInput
                 style = { styles.input }
@@ -64,14 +57,7 @@ export default function SignupScreen({ navigation }) {
                 mode = "outlined"
                 value = { email }
                 onChangeText = { setEmail }
-                theme = {{
-                    colors: {
-                        outline: 'none',
-                        placeholder: '#747474',
-                        onSurface: 'white',
-                    },
-                    roundness: 12
-                }}
+                theme = { styles.inputTheme }
             />
             <TextInput
                 style = { styles.input }
@@ -80,14 +66,7 @@ export default function SignupScreen({ navigation }) {
                 value = { password }
                 onChangeText = { setPassword }
                 secureTextEntry
-                theme = {{
-                    colors: {
-                        outline: 'none',
-                        placeholder: '#747474',
-                        onSurface: 'white',
-                    },
-                    roundness: 12
-                }}
+                theme = { styles.inputTheme }
             />
             <TextInput
                 style = { styles.input }
@@ -96,14 +75,7 @@ export default function SignupScreen({ navigation }) {
                 value = { confirmPassword }
                 onChangeText = { setConfirmPassword }
                 secureTextEntry
-                theme = {{
-                    colors: {
-                        outline: 'none',
-                        placeholder: '#747474',
-                        onSurface: 'white',
-                    },
-                    roundness: 12
-                }}
+                theme = { styles.inputTheme }
             />
             <Button
                 style = { styles.createAccountButton }
@@ -147,6 +119,14 @@ const styles = StyleSheet.create({
         marginBottom: 20,
         backgroundColor: '#212836',
         fontSize: 20,
+    },
+    inputTheme: {
+        colors: {
+            outline: 'none',
+            placeholder: '#747474',
+            onSurface: 'white',
+        },
+        roundness: 12
     },
     createAccountButton: {
         width: '100%',

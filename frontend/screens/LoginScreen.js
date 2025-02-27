@@ -43,14 +43,7 @@ export default function LoginScreen({ navigation }) {
                 mode = "outlined"
                 value = { email }
                 onChangeText = { setEmail }
-                theme = {{
-                    colors: {
-                        outline: 'none',
-                        placeholder: '#747474',
-                        onSurface: 'white',
-                    },
-                    roundness: 12
-                }}
+                theme = { styles.inputTheme }
             />
             <TextInput
                 style = { styles.input }
@@ -59,21 +52,14 @@ export default function LoginScreen({ navigation }) {
                 value = { password }
                 onChangeText = { setPassword }
                 secureTextEntry
-                theme = {{
-                    colors: {
-                        outline: 'none',
-                        placeholder: '#747474',
-                        onSurface: 'white',
-                    },
-                    roundness: 12
-                }}
+                theme = { styles.inputTheme }
             />
             <Button 
                 style = { styles.loginButton }
                 contentStyle = {{ height: 60 }}
                 labelStyle = {{ fontSize: 20 }}
                 mode = "contained"
-                onPress = {handleLogin} 
+                onPress = { handleLogin } 
             >
                 Log In
             </Button>
@@ -110,6 +96,14 @@ const styles = StyleSheet.create({
         marginBottom: 20,
         backgroundColor: '#212836',
         fontSize: 20,
+    },
+    inputTheme: {
+        colors: {
+            outline: 'none',
+            placeholder: '#747474',
+            onSurface: 'white',
+        },
+        roundness: 12
     },
     loginButton: {
         width: '100%',

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Alert, Button, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { logoutUser } from '../redux/authSlice';
+import StartStudySessionModal from '../components/StartStudySessionModal';
 
 export default function HomeScreen({ navigation }) {
     const dispatch = useDispatch();

@@ -23,7 +23,7 @@ export default function SignupScreen({ navigation }) {
         // Sign the user up and navigate to the Home screen
         dispatch(signupUser(username, email, password))
             .then(() => {
-                navigation.navigate('Home');
+                navigation.navigate('NavTabs');
             })
             .catch((err) => {
                 console.error(err);

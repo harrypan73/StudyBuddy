@@ -6,11 +6,9 @@ import store from './frontend/redux/store';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Text } from 'react-native';
 
-import HomeScreen from './frontend/screens/HomeScreen';
 import LoginScreen from './frontend/screens/LoginScreen';
 import SignupScreen from './frontend/screens/SignupScreen';
-import StartStudySessionScreen from './frontend/screens/StartStudySessionScreen';
-import EndStudySessionScreen from './frontend/screens/EndStudySessionScreen';
+import NavigationBar from './frontend/components/NavigationBar';
 
 const Stack = createStackNavigator();
 
@@ -34,13 +32,13 @@ export default function App() {
   return (
     <Provider store = { store }>
       <NavigationContainer>
-        {/* <Stack.Navigator initialRouteName = { isLoggedIn ? "Home" : "Login" } screenOptions = {{ headerShown: false }}> */}
-        <Stack.Navigator initialRouteName = "EndStudySession" screenOptions = {{ headerShown: false }}>
-          <Stack.Screen name = "Home" component = { HomeScreen } />
+        <Stack.Navigator initialRouteName = { isLoggedIn ? "NavTabs" : "Login" } screenOptions = {{ headerShown: false }}>
+          {/* Screens WITHOUT navigation bar */}
           <Stack.Screen name = "Login" component = { LoginScreen } />
           <Stack.Screen name = "Signup" component = { SignupScreen } />
-          <Stack.Screen name = "StartStudySession" component = { StartStudySessionScreen } />
-          <Stack.Screen name = "EndStudySession" component = { EndStudySessionScreen } />
+          {/* Screens WITH navigation bar */}
+          <Stack.Screen name = "NavTabs" component = { NavigationBar } />
+          
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>

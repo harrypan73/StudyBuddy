@@ -17,7 +17,7 @@ export default function LoginScreen({ navigation }) {
         // Log the user in and navigate to the Home screen
         dispatch(loginUser(email, password))
             .then(() => {
-                navigation.navigate('Home');
+                navigation.navigate('NavTabs');
             })
             .catch((err) => {
                 console.error(err);

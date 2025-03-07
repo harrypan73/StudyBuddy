@@ -4,11 +4,15 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { Provider } from 'react-redux';
 import store from './frontend/redux/store';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Text } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
 import LoginScreen from './frontend/screens/LoginScreen';
 import SignupScreen from './frontend/screens/SignupScreen';
 import NavigationBar from './frontend/components/NavigationBar';
+import HomeScreen from './frontend/screens/HomeScreen';
+import CalendarScreen from './frontend/screens/CalendarScreen';
+import FriendsScreen from './frontend/screens/FriendsScreen';
+import MapScreen from './frontend/screens/MapScreen';
 
 const Stack = createStackNavigator();
 
@@ -30,17 +34,36 @@ export default function App() {
   }
 
   return (
-    <Provider store = { store }>
-      <NavigationContainer>
-        <Stack.Navigator initialRouteName = { isLoggedIn ? "NavTabs" : "Login" } screenOptions = {{ headerShown: false }}>
-          {/* Screens WITHOUT navigation bar */}
-          <Stack.Screen name = "Login" component = { LoginScreen } />
-          <Stack.Screen name = "Signup" component = { SignupScreen } />
-          {/* Screens WITH navigation bar */}
-          <Stack.Screen name = "NavTabs" component = { NavigationBar } />
-          
-        </Stack.Navigator>
-      </NavigationContainer>
-    </Provider>
+    <>
+      <Provider store = { store }>
+        <NavigationContainer>
+          <Stack.Navigator initialRouteName = { isLoggedIn ? "Home" : "Login" } screenOptions = {{ headerShown: false }}>
+            {/* Screens WITHOUT navigation bar */}
+            <Stack.Screen name = "Login" component = { LoginScreen } />
+            <Stack.Screen name = "Signup" component = { SignupScreen } />
+            {/* Screens WITH navigation bar */}
+            <Stack.Screen name = "Home" component = { HomeScreen } />
+            <Stack.Screen name = "Calendar" component = { CalendarScreen } />
+            <Stack.Screen name = "Friends" component = { FriendsScreen } />
+            <Stack.Screen name = "Map" component = { MapScreen } />
+            
+          </Stack.Navigator>
+          <View style = { styles.navBarContainerStyle }>
+            <NavigationBar />
+          </View>
+        </NavigationContainer>
+      </Provider>
+    </>
   );
 };
+
+const styles = StyleSheet.create({
+  navBarContainerStyle: {
+    borderColor: 'black',
+    borderWidth: 1,
+    position: 'absolute',
+    width: '100%',
+    bottom: 0,
+    zIndex: 100,
+  }
+})

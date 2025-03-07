@@ -1,165 +1,102 @@
 import React, { useState } from 'react';
-import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
 
-import HomeScreen from '../screens/HomeScreen';
-import CalendarScreen from '../screens/CalendarScreen';
-import FriendsScreen from '../screens/FriendsScreen';
-import MapScreen from '../screens/MapScreen';
-import StartStudySessionModal from './StartStudySessionModal';
-
-const Tab = createBottomTabNavigator();
-
-const CustomTabBarButton = ({ onPress }) => (
-    <TouchableOpacity
-        style = { styles.floatingButton }
-        onPress = { onPress }
-    >
-        <View style = { styles.innerCircle }>
-            <Image
-                style = { styles.iconImage }
-                source = { require('../../assets/icons/StudyBuddyLogo.png') }
-            />
-        </View>
-    </TouchableOpacity>
-)
-
-const NavigationBar = () => {
-    const [modalVisible, setModalVisible] = useState(false);
-    
-    const handleStartStudySession = () => {
-        // Start a new study session
-        console.log('Starting study session...');
-    }
+const CustomBottomNavigationBar = ({ onStartStudySession }) => {
+    const navigation = useNavigation();
 
     return (
-        <>
-            <Tab.Navigator
-                initialRouteName = "Home"
-                screenOptions = {{
-                    headerShown: false,
-                    tabBarStyle: styles.tabBar,
-                    tabBarShowLabel: true,
-                    tabBarActiveTintColor: '#2563EB',
-                    tabBarInactiveTintColor: 'white',
-                    tabBarLabelStyle: {
-                        fontSize: 12,
-                        fontWeight: 'bold',
-                    },
-                    tabBarItemStyle: styles.tabItemContainer
-                }}>
-                    <Tab.Screen
-                        name = "Home"
-                        component = { HomeScreen }
-                        options = {{
-                            tabBarIcon: ({ color }) => (
-                                <MaterialCommunityIcons 
-                                    name = "home" 
-                                    color = { color } 
-                                    size = { 30 } 
-                                />
-                            ),
-                        }}
-                    />
-                    <Tab.Screen
-                        name = "Calendar"
-                        component = { CalendarScreen }
-                        options = {{
-                            tabBarIcon: ({ color }) => (
-                                <MaterialCommunityIcons 
-                                    name = "calendar" 
-                                    color = { color } 
-                                    size = { 30 } 
-                                />
-                            ),
-                        }}
-                    />
-                    <Tab.Screen
-                        name = "Study"
-                        component = { () => null }
-                        options = {{
-                            tabBarButton: () => 
-                                <CustomTabBarButton 
-                                    onPress = { () => setModalVisible(true) }
-                                />,
-                            tabBarItemStyle: [styles.tabItemContainer, { marginRight: 10, marginLeft: 10 }],
-                        }}
-                    />
-                    <Tab.Screen
-                        name = "Friends"
-                        component = { FriendsScreen }
-                        options = {{
-                            tabBarIcon: ({ color }) => (
-                                <MaterialCommunityIcons 
-                                    name = "account-group" 
-                                    color = { color } 
-                                    size = { 30 } 
-                                />
-                            ),
-                        }}
-                    />
-                    <Tab.Screen
-                        name = "Map"
-                        component = { MapScreen }
-                        options = {{
-                            tabBarIcon: ({ color }) => (
-                                <MaterialCommunityIcons 
-                                    name = "map" 
-                                    color = { color } 
-                                    size = { 30 } 
-                                />
-                            ),
-                        }}
-                    />
-            </Tab.Navigator>
-            <StartStudySessionModal
-                visible = { modalVisible }
-                onClose = { () => setModalVisible(false) }
-                onStartSession = { handleStartStudySession }
-            />
-        </>
+        <View style = { styles.navBarStyle }>
+            <TouchableOpacity style = { styles.tabStyle }>
+                <MaterialCommunityIcons 
+                    name = "home" 
+                    size = { 30 }
+                    color = 'white'
+                />
+                <Text style = {{ color: 'white' }}>Home</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style = { styles.tabStyle }>
+                <MaterialCommunityIcons 
+                    name = "calendar" 
+                    size = { 30 }
+                    color = 'white'
+                />
+                <Text style = {{ color: 'white' }}>Calendar</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style = { styles.floatingButton }>
+                <View style = { styles.innerCircle }>
+                    <Image
+                        style = { styles.iconImage }
+                        source = { require('../../assets/icons/StudyBuddyLogo.png') }
+                    /> 
+                </View>
+            </TouchableOpacity>
+            <TouchableOpacity style = { styles.tabStyle }>
+                <MaterialCommunityIcons 
+                    name = "account-group" 
+                    size = { 30 }
+                    color = 'white'
+                />
+                <Text style = {{ color: 'white' }}>Friends</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style = { styles.tabStyle }>
+                <MaterialCommunityIcons 
+                    name = "map" 
+                    size = { 30 }
+                    color = 'white'
+                />
+                <Text style = {{ color: 'white' }}>Map</Text>
+            </TouchableOpacity>
+        </View>
     )
-}
+};
 
 const styles = StyleSheet.create({
-    tabBar: {
-        backgroundColor: "#334155",
-        height: '10%',
-        position: "absolute",
-        spacing: 100,
-        borderTopLeftRadius: 25,
-        borderTopRightRadius: 25,
+    navBarStyle: {
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        alignItems: 'center',
+        bottom: 0,
+        width: '100%',
+        height: '12%',
+        position: 'absolute',
+        backgroundColor: '#334155',
+        borderTopLeftRadius: 12,
+        borderTopRightRadius: 12,
     },
-    floatingButton: {
-        top: 10,
+    tabStyle: {
         justifyContent: 'center',
         alignItems: 'center',
+        borderColor: 'pink',
+        flex: 1,
+        height: '100%',
+        // borderWidth: 2,
+    },
+    floatingButton: {
+        top: -25,
+        justifyContent: 'center',
+        alignItems: 'center',
+        zIndex: 1,
     },
     innerCircle: {
         width: 100,
         height: 100,
-        borderRadius: 45,
+        borderRadius: 50,
+        borderWidth: 5,
+        borderColor: '#334155',
         backgroundColor: 'white',
         justifyContent: 'center',
         alignItems: 'center',
-        shadowColor: 'black',
-        shadowOpacity: 0.5,
-        shadowRadius: 5,
-        elevation: 5,
+        // shadowColor: 'black',
+        // shadowOpacity: 0.5,
+        // shadowRadius: 5,
+        // elevation: 5,
     },
     iconImage: {
-        height: 60,
+        height: 50,
         aspectRatio: 1.1,
     },
-    tabItemContainer: {
-        height: '120%',
-        // borderColor: 'white',
-        // borderWidth: 1,
-        flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems: 'flex-end',
-    },
-})
+});
 
-export default NavigationBar;
+export default CustomBottomNavigationBar;

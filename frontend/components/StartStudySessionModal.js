@@ -1,11 +1,37 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Alert, Modal, StyleSheet, Text, View } from 'react-native';
-import { Button, TextInput } from 'react-native-paper';
+import { Button, Switch, TextInput } from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as Location from 'expo-location';
 
 export default function StartStudySessionModal({ visible, onClose }) {
     const [location, setLocation] = useState('');
     const [subject, setSubject] = useState('');
+    const [shareLocation, setShareLocation] = useState(false);
+    const [coordinates, setCoordinates] = useState({ lat: null, lng: null});
+
+    useEffect(() => {
+        console.log('Share location:', shareLocation);
+        const getLocation = async () => {
+            const { status } = await Location.requestForegroundPermissionsAsync();
+            if (status !== 'granted') {
+                Alert.alert('Location Permission', 'Permission to access location was denied');
+                return;
+            }
+            const location = await Location.getCurrentPositionAsync({});
+            setCoordinates({
+                lat: location.coords.latitude,
+                lng: location.coords.longitude,
+            })
+            console.log("Coordinates:", { lat: location.coords.latitude, lng: location.coords.longitude });
+        };
+
+        if (shareLocation) {
+            getLocation();
+        } else {
+            setCoordinates({ lat: null, lng: null });
+        }
+    }, [shareLocation]);
 
     const handleStartStudySession = async () => {
         const token = await AsyncStorage.getItem('token');
@@ -25,10 +51,7 @@ export default function StartStudySessionModal({ visible, onClose }) {
                 body: JSON.stringify({
                     startTime: new Date(),
                     location: location,
-                    coordinates: {
-                        lat: 0, // Replace with actual latitude
-                        lng: 0, // Replace with actual longitude
-                    },
+                    coordinates: coordinates,
                     subject: subject,
                 })
             });
@@ -38,6 +61,8 @@ export default function StartStudySessionModal({ visible, onClose }) {
                 onClose();
                 setLocation('');
                 setSubject('');
+                setCoordinates({ lat: null, lng: null });
+                setShareLocation(false);
             } else {
                 Alert.alert('Error', 'Failed to create study session');
             }
@@ -59,7 +84,7 @@ export default function StartStudySessionModal({ visible, onClose }) {
                     <Text style = { styles.title }>Start Study Session</Text>
                     <TextInput
                         style = { styles.input }
-                        label = "Location"
+                        label = "Location Name"
                         mode = "outlined"
                         value = { location }
                         onChangeText = { setLocation }
@@ -73,6 +98,14 @@ export default function StartStudySessionModal({ visible, onClose }) {
                         onChangeText = { setSubject }
                         theme = { styles.inputTheme }
                     />
+                    <View style = { styles.switchContainer }>
+                        <Text style = { styles.switchText }>Share My Current Location</Text>
+                        <Switch
+                            value = { shareLocation }
+                            onValueChange = { setShareLocation }
+                            color = '#32AA72'
+                        />
+                    </View>
                     <View
                         style = { styles.buttonContainer }
                     >
@@ -127,6 +160,7 @@ const styles = StyleSheet.create({
         // height: 48,
         marginBottom: 16,
         backgroundColor: '#2C2C2C',
+        fontSize: 20,
     },
     inputTheme: {
         colors: {
@@ -135,6 +169,17 @@ const styles = StyleSheet.create({
             onSurface: 'white',
         },
         roundness: 12,
+    },
+    switchContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: 16,
+    },
+    switchText: {
+        color: 'white',
+        fontSize: 20,
+        fontWeight: 'bold',
     },
     buttonContainer: {
         flexDirection: 'row',

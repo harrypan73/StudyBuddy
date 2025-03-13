@@ -25,6 +25,10 @@ export default function App() {
     const checkAuth = async () => {
       const token = await AsyncStorage.getItem('token');
       setIsLoggedIn(!!token);
+      if (token) {
+        console.log("Auto-logged in from past session, starting at route: Home");
+        setCurrentRoute('Home');
+      }
       setLoading(false);
     };
     checkAuth();
@@ -39,7 +43,9 @@ export default function App() {
       <Provider store = { store }>
         <NavigationContainer
           onStateChange = { (state) => {
-            setCurrentRoute(state.routes[state.index].name);
+            const routeName = state.routes[state.index]?.name;
+            console.log("Navigated to route:", routeName);  // Debugging route changes
+            setCurrentRoute(routeName);  // Update current route when it changes
           }}
         >
           <Stack.Navigator initialRouteName = { isLoggedIn ? "Home" : "Login" } screenOptions = {{ headerShown: false }}>

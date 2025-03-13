@@ -19,6 +19,7 @@ const Stack = createStackNavigator();
 export default function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [currentRoute, setCurrentRoute] = useState('');
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -36,7 +37,11 @@ export default function App() {
   return (
     <>
       <Provider store = { store }>
-        <NavigationContainer>
+        <NavigationContainer
+          onStateChange = { (state) => {
+            setCurrentRoute(state.routes[state.index].name);
+          }}
+        >
           <Stack.Navigator initialRouteName = { isLoggedIn ? "Home" : "Login" } screenOptions = {{ headerShown: false }}>
             {/* Screens WITHOUT navigation bar */}
             <Stack.Screen name = "Login" component = { LoginScreen } />
@@ -48,9 +53,13 @@ export default function App() {
             <Stack.Screen name = "Map" component = { MapScreen } />
             
           </Stack.Navigator>
-          <View style = { styles.navBarContainerStyle }>
-            <NavigationBar />
-          </View>
+          { currentRoute !== '' &&
+            currentRoute !== 'Login' && 
+            currentRoute !== 'Signup' && (
+            <View style = { styles.navBarContainerStyle }>
+              <NavigationBar />
+            </View>
+          )}
         </NavigationContainer>
       </Provider>
     </>
@@ -59,8 +68,8 @@ export default function App() {
 
 const styles = StyleSheet.create({
   navBarContainerStyle: {
-    borderColor: 'black',
-    borderWidth: 1,
+    // borderColor: 'black',
+    // borderWidth: 1,
     position: 'absolute',
     width: '100%',
     bottom: 0,

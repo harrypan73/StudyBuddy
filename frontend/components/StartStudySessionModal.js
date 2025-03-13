@@ -1,10 +1,51 @@
 import React, { useState } from 'react';
 import { Alert, Modal, StyleSheet, Text, View } from 'react-native';
 import { Button, TextInput } from 'react-native-paper';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export default function StartStudySessionModal({ visible, onClose, onStartSession }) {
+export default function StartStudySessionModal({ visible, onClose }) {
     const [location, setLocation] = useState('');
     const [subject, setSubject] = useState('');
+
+    const handleStartStudySession = async () => {
+        const token = await AsyncStorage.getItem('token');
+
+        if (!token) {
+            Alert.alert('Authentication Error', 'Please log in again');
+            return;
+        }
+
+        try {
+            const response = await fetch('http://localhost:5001/api/study-sessions/new', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                },
+                body: JSON.stringify({
+                    startTime: new Date(),
+                    location: location,
+                    coordinates: {
+                        lat: 0, // Replace with actual latitude
+                        lng: 0, // Replace with actual longitude
+                    },
+                    subject: subject,
+                })
+            });
+
+            if (response.ok) {
+                Alert.alert('Success', 'Study session created successfully');
+                onClose();
+                setLocation('');
+                setSubject('');
+            } else {
+                Alert.alert('Error', 'Failed to create study session');
+            }
+        } catch (err) {
+            console.error(err);
+            Alert.alert('Error', 'Server error');
+        }
+    }
 
     return (
         <Modal
@@ -33,25 +74,21 @@ export default function StartStudySessionModal({ visible, onClose, onStartSessio
                         theme = { styles.inputTheme }
                     />
                     <View
-                        style = {{
-                            flexDirection: 'row',
-                            justifyContent: 'space-between',
-                            width: '100%',
-                        }}
+                        style = { styles.buttonContainer }
                     >
                         <Button
                             style = { styles.startStudySessionButton }
-                            contentStyle = {{ height: 60 }}
-                            labelStyle = {{ fontSize: 20 }}
+                            contentStyle = {{ height: 48}}
+                            labelStyle = {{ fontSize: 20, fontWeight: 'bold', marginHorizontal: 10 }}
                             mode = "contained"
-                            onPress = { onStartSession }
+                            onPress = { handleStartStudySession }
                         >
-                            Start Study Session
+                            Start Session
                         </Button>
                         <Button
                             style = { styles.cancelButton }
-                            contentStyle = {{ height: 60 }}
-                            labelStyle = {{ fontSize: 20 }}
+                            contentStyle = {{ height: 48 }}
+                            labelStyle = {{ fontSize: 20, fontWeight: 'bold', marginHorizontal: 10 }}
                             mode = "contained"
                             onPress = { onClose }
                         >
@@ -72,21 +109,23 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     modalContainer: {
-        width: '80%',
+        width: '90%',
         backgroundColor: '#1E1E1E',
         padding: 20,
         borderRadius: 12,
+        paddingVertical: 30,
     },
     title: {
-        fontSize: 20,
+        fontSize: 30,
         color: 'white',
         fontWeight: 'bold',
         textAlign: 'center',
-        marginBottom: 15,
+        marginBottom: 16,
     },
     input: {
         width: '100%',
-        marginBottom: 15,
+        // height: 48,
+        marginBottom: 16,
         backgroundColor: '#2C2C2C',
     },
     inputTheme: {
@@ -100,16 +139,17 @@ const styles = StyleSheet.create({
     buttonContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        marginTop: 10,
+        gap: 20,
+        marginTop: 4,
     },
     startStudySessionButton: {
-        flex: 1,
-        marginRight: 5,
+        flex: 2,
         backgroundColor: '#32AA72',
+        borderRadius: 12,
     },
     cancelButton: {
         flex: 1,
-        marginLeft: 5,
         backgroundColor: '#334155',
+        borderRadius: 12,
     },
 })

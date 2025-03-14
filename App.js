@@ -20,6 +20,7 @@ export default function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [loading, setLoading] = useState(true);
   const [currentRoute, setCurrentRoute] = useState('');
+  const [activeSession, setActiveSession] = useState(null);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -33,6 +34,24 @@ export default function App() {
     };
     checkAuth();
   }, []);
+
+  useEffect(() => {
+    const fetchActiveSession = async () => {
+      if (isLoggedIn) {
+        try {
+          const response = await fetch('http://localhost:5001/api/study-sessions/active');
+          const data = await response.json();
+          setActiveSession(data);
+          console.log('Active session:', data);
+        } catch (err) {
+          console.error('Error fetching active session:', err);
+        }
+      }
+    };
+    if (isLoggedIn) {
+      fetchActiveSession();
+    }
+  }, [isLoggedIn]);
 
   if (loading) {
     return <Text>Loading...</Text>

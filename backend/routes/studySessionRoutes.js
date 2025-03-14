@@ -61,6 +61,19 @@ router.get('/all', authMiddleware, async (req, res) => {
     } catch (err) {
         res.status(500).json({ message: 'Server error' });
     }
+});
+
+// GET current active study session for logged in user
+router.get('/active', authMiddleware, async (req, res) => {
+    console.log("Attempting to get active study session for user with id: ", req.user.id);
+    try {
+        const activeSession = await StudySession.findOne(
+            { userId: req.userID, endTime: null },
+        );
+        res.json(activeSession || null);
+    } catch (err) {
+        res.status(500).json({ message: 'Server error' });
+    }
 })
 
 module.exports = router;

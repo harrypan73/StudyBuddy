@@ -10,6 +10,7 @@ export default function StartStudySessionModal({ visible, onClose }) {
     const [shareLocation, setShareLocation] = useState(false);
     const [coordinates, setCoordinates] = useState({ lat: null, lng: null});
 
+
     useEffect(() => {
         console.log('Share location:', shareLocation);
         const getLocation = async () => {

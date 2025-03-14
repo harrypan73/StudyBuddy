@@ -16,4 +16,7 @@ const StudySessionSchema = new mongoose.Schema({
     snapshotURL: { type: String } // URL of optional snapshot
 }, { timestamps: true });
 
+// Index for fast lookup of active study sessions by user ID
+StudySessionSchema.index({ userId: 1, endTime: 1 });
+
 module.exports = mongoose.model('StudySession', StudySessionSchema);

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import { Provider } from 'react-redux';
+import { Provider, useDispatch, useSelector } from 'react-redux';
 import store from './frontend/redux/store';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StyleSheet, Text, View } from 'react-native';
@@ -14,13 +14,17 @@ import CalendarScreen from './frontend/screens/CalendarScreen';
 import FriendsScreen from './frontend/screens/FriendsScreen';
 import MapScreen from './frontend/screens/MapScreen';
 
+import { setActiveSession, clearActiveSession } from './frontend/redux/studySessionSlice';
+
 const Stack = createStackNavigator();
 
-export default function App() {
+const AppContent = () =>{
+  console.log("App component rendered");
+  const dispatch = useDispatch();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [loading, setLoading] = useState(true);
   const [currentRoute, setCurrentRoute] = useState('');
-  const [activeSession, setActiveSession] = useState(null);
+  const activeSession = useSelector((state) => state.studySession.activeSession);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -37,59 +41,81 @@ export default function App() {
 
   useEffect(() => {
     const fetchActiveSession = async () => {
-      if (isLoggedIn) {
-        try {
-          const response = await fetch('http://localhost:5001/api/study-sessions/active');
-          const data = await response.json();
-          setActiveSession(data);
-          console.log('Active session:', data);
-        } catch (err) {
-          console.error('Error fetching active session:', err);
-        }
+      const token = await AsyncStorage.getItem('token');
+
+      if (!token) {
+        console.error('No token found, cannot fetch active session');
+        return;
+      }
+
+      try {
+        const response = await fetch('http://localhost:5001/api/study-sessions/active', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+        const data = await response.json();
+        dispatch(setActiveSession(data));
+        console.log('Active session:', data);
+      } catch (err) {
+        dispatch(clearActiveSession());
+        console.error('Error fetching active session:', err);
       }
     };
     if (isLoggedIn) {
       fetchActiveSession();
+    } else {
+      dispatch(clearActiveSession());
     }
-  }, [isLoggedIn]);
+  }, [isLoggedIn, dispatch]);
 
   if (loading) {
     return <Text>Loading...</Text>
   }
 
   return (
-    <>
-      <Provider store = { store }>
-        <NavigationContainer
-          onStateChange = { (state) => {
-            const routeName = state.routes[state.index]?.name;
-            console.log("Navigated to route:", routeName);  // Debugging route changes
-            setCurrentRoute(routeName);  // Update current route when it changes
-          }}
-        >
-          <Stack.Navigator initialRouteName = { isLoggedIn ? "Home" : "Login" } screenOptions = {{ headerShown: false }}>
-            {/* Screens WITHOUT navigation bar */}
-            <Stack.Screen name = "Login" component = { LoginScreen } />
-            <Stack.Screen name = "Signup" component = { SignupScreen } />
-            {/* Screens WITH navigation bar */}
-            <Stack.Screen name = "Home" component = { HomeScreen } />
-            <Stack.Screen name = "Calendar" component = { CalendarScreen } />
-            <Stack.Screen name = "Friends" component = { FriendsScreen } />
-            <Stack.Screen name = "Map" component = { MapScreen } />
-            
-          </Stack.Navigator>
-          { currentRoute !== '' &&
-            currentRoute !== 'Login' && 
-            currentRoute !== 'Signup' && (
-            <View style = { styles.navBarContainerStyle }>
-              <NavigationBar />
-            </View>
-          )}
-        </NavigationContainer>
-      </Provider>
-    </>
+    <NavigationContainer
+      onStateChange = { (state) => {
+        const routeName = state.routes[state.index]?.name;
+        console.log("Navigated to route:", routeName);  // Debugging route changes
+        setCurrentRoute(routeName);  // Update current route when it changes
+      }}
+    >
+      <Stack.Navigator initialRouteName = { isLoggedIn ? "Home" : "Login" } screenOptions = {{ headerShown: false }}>
+        {/* Screens WITHOUT navigation bar */}
+        <Stack.Screen name = "Login">
+          {props => <LoginScreen { ...props } setIsLoggedIn = { setIsLoggedIn } />}
+        </Stack.Screen>
+        <Stack.Screen name = "Signup" component = { SignupScreen } />
+        {/* Screens WITH navigation bar */}
+        <Stack.Screen name = "Home">
+        {props => <HomeScreen { ...props } setIsLoggedIn = { setIsLoggedIn } />}
+        </Stack.Screen>
+        <Stack.Screen name = "Calendar" component = { CalendarScreen } />
+        <Stack.Screen name = "Friends" component = { FriendsScreen } />
+        <Stack.Screen name = "Map" component = { MapScreen } />
+        
+      </Stack.Navigator>
+      { currentRoute !== '' &&
+        currentRoute !== 'Login' && 
+        currentRoute !== 'Signup' && (
+        <View style = { styles.navBarContainerStyle }>
+          <NavigationBar />
+        </View>
+      )}
+    </NavigationContainer>
   );
 };
+
+export default function App() {
+  return (
+    <Provider store = { store }>
+      <AppContent />
+    </Provider>
+  )
+}
 
 const styles = StyleSheet.create({
   navBarContainerStyle: {

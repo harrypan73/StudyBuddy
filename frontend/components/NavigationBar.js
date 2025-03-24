@@ -1,19 +1,17 @@
 import React, { useState } from 'react';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useSelector } from 'react-redux';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
-import HomeScreen from '../screens/HomeScreen';
-import CalendarScreen from '../screens/CalendarScreen';
-import FriendsScreen from '../screens/FriendsScreen';
-import MapScreen from '../screens/MapScreen';
 import StartStudySessionModal from './StartStudySessionModal';
 
 const Stack = createStackNavigator();
 
 const CustomBottomNavigationBar = ({ navigation, onStartStudySession }) => {
-
+    console.log("CustomBottomNavigationBar rendered");
+    const activeSession = useSelector((state) => state.studySession.activeSession);
     return (
         <View style = { styles.navBarStyle }>
             <TouchableOpacity 
@@ -42,7 +40,7 @@ const CustomBottomNavigationBar = ({ navigation, onStartStudySession }) => {
                 style = { styles.floatingButton }
                 onPress = { onStartStudySession }
             >
-                <View style = { styles.innerCircle }>
+                <View style = { activeSession ? styles.innerCircleActive : styles.innerCircle }>
                     <Image
                         style = { styles.iconImage }
                         source = { require('../../assets/icons/StudyBuddyLogo.png') }
@@ -123,10 +121,16 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
         justifyContent: 'center',
         alignItems: 'center',
-        // shadowColor: 'black',
-        // shadowOpacity: 0.5,
-        // shadowRadius: 5,
-        // elevation: 5,
+    },
+    innerCircleActive: {
+        width: 100,
+        height: 100,
+        borderRadius: 50,
+        borderWidth: 5,
+        borderColor: '#334155',
+        backgroundColor: 'red',
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     iconImage: {
         height: 50,

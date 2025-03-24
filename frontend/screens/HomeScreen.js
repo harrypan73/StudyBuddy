@@ -2,15 +2,16 @@ import React, { useState } from 'react';
 import { Alert, Button, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { logoutUser } from '../redux/authSlice';
-import StartStudySessionModal from '../components/StartStudySessionModal';
 
-export default function HomeScreen({ navigation }) {
+export default function HomeScreen({ navigation, setIsLoggedIn }) {
+    console.log("Home screen rendered");
     const dispatch = useDispatch();
 
     const handleLogout = () => {
         // Log the user out and navigate to the Login screen
         dispatch(logoutUser())
             .then(() => {
+                setIsLoggedIn(false);
                 navigation.navigate('Login');
             })
             .catch((err) => {

@@ -27,7 +27,7 @@ router.post('/signup', [
         }
 
         const newUser = await createUser(username, email, password);
-        const token = jwt.sign({ id: newUser.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+        const token = jwt.sign({ id: newUser.id }, process.env.JWT_SECRET);
 
         res.json({ token, user: { id: newUser.id, username: newUser.username, email: newUser.email } });
         console.log("User signed up successfully");
@@ -60,7 +60,7 @@ router.post('/login', [
             return res.status(400).json({ message: 'Incorrect password' });
         }
 
-        const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+        const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET);
         res.json({ token, user: {id: user.id, username: user.username, email: user.email } });
         console.log("User logged in successfully");
     } catch (err) {

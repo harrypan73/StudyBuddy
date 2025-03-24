@@ -4,7 +4,7 @@ import { Button, TextInput } from 'react-native-paper';
 import { useDispatch } from 'react-redux';
 import { loginUser } from '../redux/authSlice';
 
-export default function LoginScreen({ navigation }) {
+export default function LoginScreen({ navigation, setIsLoggedIn }) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const dispatch = useDispatch();
@@ -17,6 +17,7 @@ export default function LoginScreen({ navigation }) {
         // Log the user in and navigate to the Home screen
         dispatch(loginUser(email, password))
             .then(() => {
+                setIsLoggedIn(true);
                 navigation.navigate('Home');
             })
             .catch((err) => {

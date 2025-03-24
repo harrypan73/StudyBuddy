@@ -1,10 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { Alert, Modal, StyleSheet, Text, View } from 'react-native';
+import { useDispatch } from 'react-redux';
 import { Button, Switch, TextInput } from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Location from 'expo-location';
 
+import { setActiveSession, clearActiveSession } from '../redux/studySessionSlice';
+
 export default function StartStudySessionModal({ visible, onClose }) {
+    const dispatch = useDispatch();
     const [location, setLocation] = useState('');
     const [subject, setSubject] = useState('');
     const [shareLocation, setShareLocation] = useState(false);
@@ -58,6 +62,8 @@ export default function StartStudySessionModal({ visible, onClose }) {
             });
 
             if (response.ok) {
+                const newSession = await response.json();
+                dispatch(setActiveSession(newSession));
                 Alert.alert('Success', 'Study session created successfully');
                 onClose();
                 setLocation('');

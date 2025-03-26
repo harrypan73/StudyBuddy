@@ -18,7 +18,7 @@ import { setActiveSession, clearActiveSession } from './frontend/redux/studySess
 
 const Stack = createStackNavigator();
 
-const AppContent = () =>{
+const AppContent = () => {
   console.log("App component rendered");
   const dispatch = useDispatch();
   const [isLoggedIn, setIsLoggedIn] = useState(false);

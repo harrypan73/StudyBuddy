@@ -2,18 +2,30 @@ import React, { useEffect, useState } from 'react';
 import { Alert, Modal, StyleSheet, Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { Button, Switch, TextInput } from 'react-native-paper';
+import { Rating } from 'react-native-ratings';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Location from 'expo-location';
 
 import { setActiveSession, clearActiveSession } from '../redux/studySessionSlice';
 
-export default function StartStudySessionModal({ visible, onClose }) {
+export default function StartModal({ visible, onClose, mode, activeSession }) {
+    if (mode == 'start') {
+        return (
+            <StartStudySessionModal visible = { visible } onClose = { onClose }/>
+        )
+    } else {
+        return (
+            <EndStudySessionModal visible = { visible } onClose = { onClose } activeSession = { activeSession }/>
+        )
+    }
+}
+
+const StartStudySessionModal = ({ visible, onClose }) => {
     const dispatch = useDispatch();
     const [location, setLocation] = useState('');
     const [subject, setSubject] = useState('');
     const [shareLocation, setShareLocation] = useState(false);
-    const [coordinates, setCoordinates] = useState({ lat: null, lng: null});
-
+    const [coordinates, setCoordinates] = useState({ lat: null, lng: null });
 
     useEffect(() => {
         console.log('Share location:', shareLocation);
@@ -55,6 +67,7 @@ export default function StartStudySessionModal({ visible, onClose }) {
                 },
                 body: JSON.stringify({
                     startTime: new Date(),
+                    endTime: null,
                     location: location,
                     coordinates: coordinates,
                     subject: subject,
@@ -78,13 +91,12 @@ export default function StartStudySessionModal({ visible, onClose }) {
             Alert.alert('Error', 'Server error');
         }
     }
-
     return (
         <Modal
             visible = { visible }
             transparent = { true }
             animationType = 'fade'
-            onRequestClose={ onClose }
+            onRequestClose ={ onClose }
         >
             <View style = { styles.overlay }>
                 <View style = { styles.modalContainer }>
@@ -124,6 +136,108 @@ export default function StartStudySessionModal({ visible, onClose }) {
                             onPress = { handleStartStudySession }
                         >
                             Start Session
+                        </Button>
+                        <Button
+                            style = { styles.cancelButton }
+                            contentStyle = {{ height: 48 }}
+                            labelStyle = {{ fontSize: 20, fontWeight: 'bold', marginHorizontal: 10 }}
+                            mode = "contained"
+                            onPress = { onClose }
+                        >
+                            Cancel
+                        </Button>
+                    </View>
+                </View>
+            </View>
+        </Modal>
+    )
+}
+
+const EndStudySessionModal = ({ visible, onClose, activeSession }) => {
+    const dispatch = useDispatch();
+    const [qualityRating, setQualityRating] = useState(0);
+    const [notes, setNotes] = useState('');
+    
+    const handleEndStudySession = async () => {
+        const token = await AsyncStorage.getItem('token');
+
+        if (!token) {
+            Alert.alert('Authentication Error', 'Please log in again');
+            return;
+        }
+
+        if (!activeSession) {
+            Alert.alert('No Active Session', 'No active session found');
+        }
+
+        try {
+            console.log(activeSession);
+            const response = await fetch(`http://localhost:5001/api/study-sessions/${activeSession._id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                },
+                body: JSON.stringify({
+                    endTime: new Date(),
+                    qualityRating: qualityRating,
+                    notes: notes,
+                })
+            });
+
+            if (response.ok) {
+                const updatedSession = await response.json();
+                dispatch(clearActiveSession());
+                Alert.alert('Success', 'Study session ended successfully');
+                onClose();
+                setQualityRating(0);
+                setNotes('');
+            } else {
+                Alert.alert('Error', 'Failed to end study session');
+            }
+        } catch (err) {
+            console.error(err);
+            Alert.alert('Error', 'Server error');
+        }
+    }
+
+    return (
+        <Modal
+            visible = { visible }
+            transparent = { true }
+            animationType = 'fade'
+            onRequestClose ={ onClose }
+        >
+            <View style = { styles.overlay }>
+                <View style = { styles.modalContainer }>
+                    <Text style = { styles.title }>End Study Session</Text>
+                    <Rating
+                        type = 'star'
+                        ratingCount = { 5 }
+                        imageSize = { 50 }
+                        startingValue = { qualityRating }
+                        onFinishRating = { setQualityRating }
+                        tintColor = "#1E1E1E"
+                    />
+                    <TextInput
+                        style = { styles.input }
+                        label = "Notes"
+                        mode = "outlined"
+                        value = { notes }
+                        onChangeText = { setNotes }
+                        theme = { styles.inputTheme }
+                    />
+                    <View
+                        style = { styles.buttonContainer }
+                    >
+                        <Button
+                            style = { styles.endStudySessionButton }
+                            contentStyle = {{ height: 48}}
+                            labelStyle = {{ fontSize: 20, fontWeight: 'bold', marginHorizontal: 10 }}
+                            mode = "contained"
+                            onPress = { handleEndStudySession }
+                        >
+                            End Session
                         </Button>
                         <Button
                             style = { styles.cancelButton }
@@ -199,9 +313,14 @@ const styles = StyleSheet.create({
         backgroundColor: '#32AA72',
         borderRadius: 12,
     },
+    endStudySessionButton: {
+        flex: 2,
+        backgroundColor: "#FA7070",
+        borderRadius: 12,
+    },
     cancelButton: {
         flex: 1,
         backgroundColor: '#334155',
         borderRadius: 12,
-    },
+    }
 })

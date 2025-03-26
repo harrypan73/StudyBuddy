@@ -5,13 +5,12 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
-import StartStudySessionModal from './StartStudySessionModal';
+import StartModal from './StudySessionModal';
 
 const Stack = createStackNavigator();
 
-const CustomBottomNavigationBar = ({ navigation, onStartStudySession }) => {
+const CustomBottomNavigationBar = ({ navigation, activeSession, openStudySessionModal }) => {
     console.log("CustomBottomNavigationBar rendered");
-    const activeSession = useSelector((state) => state.studySession.activeSession);
     return (
         <View style = { styles.navBarStyle }>
             <TouchableOpacity 
@@ -38,7 +37,7 @@ const CustomBottomNavigationBar = ({ navigation, onStartStudySession }) => {
             </TouchableOpacity>
             <TouchableOpacity 
                 style = { styles.floatingButton }
-                onPress = { onStartStudySession }
+                onPress = { openStudySessionModal }
             >
                 <View style = { activeSession ? styles.innerCircleActive : styles.innerCircle }>
                     <Image
@@ -74,16 +73,19 @@ const CustomBottomNavigationBar = ({ navigation, onStartStudySession }) => {
 };
 
 const NavigationBar = () => {
+    const activeSession = useSelector((state) => state.studySession.activeSession);
     const [modalVisible, setModalVisible] = useState(false);
     const navigation = useNavigation();
 
     return (
         <View style = {{ flex: 1 }}>
-            <CustomBottomNavigationBar navigation = { navigation } onStartStudySession = { () => setModalVisible(true) } />
+            <CustomBottomNavigationBar navigation = { navigation } activeSession = { activeSession } openStudySessionModal = { () => setModalVisible(true) } />
 
-            <StartStudySessionModal
+            <StartModal
                 visible = { modalVisible }
                 onClose = { () => setModalVisible(false) }
+                mode = { activeSession ? 'end' : 'start' }
+                activeSession = { activeSession }
             />
         </View>
     )

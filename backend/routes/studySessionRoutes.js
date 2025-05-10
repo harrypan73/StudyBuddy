@@ -53,7 +53,7 @@ router.delete('/:id', authMiddleware, async (req, res) => {
 });
 
 // GET all study sessions for logged in user
-router.get('/all', authMiddleware, async (req, res) => {
+router.get('/allUser', authMiddleware, async (req, res) => {
     console.log("Attempting to get all study sessions for user with id: ", req.user.id);
     try {
         const sessions = await StudySession.find({ userId: req.user.id }).sort({ createdAt: -1 });
@@ -71,6 +71,20 @@ router.get('/active', authMiddleware, async (req, res) => {
             { userId: req.user.id, endTime: null },
         );
         res.json(activeSession || null);
+    } catch (err) {
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+// GET all study sessions in database
+router.get('/all', authMiddleware, async (req, res) => {
+    console.log("Attempting to get all study sessions in database");
+    try {
+        const sessions = await StudySession.find({}).sort([
+            ['endTime', 1],
+            ['startTime', -1]
+        ]);
+        res.json(sessions);
     } catch (err) {
         res.status(500).json({ message: 'Server error' });
     }

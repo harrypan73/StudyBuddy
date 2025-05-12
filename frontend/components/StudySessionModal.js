@@ -6,7 +6,7 @@ import { Rating } from 'react-native-ratings';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Location from 'expo-location';
 
-import { setActiveSession, clearActiveSession } from '../redux/studySessionSlice';
+import { fetchSessions, setActiveSession, clearActiveSession } from '../redux/studySessionSlice';
 
 export default function StartModal({ visible, onClose, mode, activeSession }) {
     if (mode == 'start') {
@@ -180,6 +180,7 @@ const EndStudySessionModal = ({ visible, onClose, activeSession }) => {
                 },
                 body: JSON.stringify({
                     endTime: new Date(),
+                    isActive: false,
                     qualityRating: qualityRating,
                     notes: notes,
                 })
@@ -188,6 +189,7 @@ const EndStudySessionModal = ({ visible, onClose, activeSession }) => {
             if (response.ok) {
                 const updatedSession = await response.json();
                 dispatch(clearActiveSession());
+                dispatch(fetchSessions());
                 Alert.alert('Success', 'Study session ended successfully');
                 onClose();
                 setQualityRating(0);

@@ -6,9 +6,11 @@ const StudySession = require('../models/StudySession');
 // CREATE a new study session
 router.post('/new', authMiddleware, async (req, res) => {
     console.log("Attempting to create a new study session: ", req.body);
+    console.log("User details: ", req.user);
     try {
         const session = new StudySession({
             userId: req.user.id,
+            username: req.user.username,
             ...req.body
         });
         await session.save();
@@ -80,8 +82,13 @@ router.get('/active', authMiddleware, async (req, res) => {
 router.get('/all', authMiddleware, async (req, res) => {
     console.log("Attempting to get all study sessions in database");
     try {
-        const sessions = await StudySession.find({}).sort([
-            ['endTime', 1],
+        const sessions = await StudySession.find({
+            $nor: [
+                { userId: req.user.id, endTime: null}
+            ]
+        }).sort([
+            ['isActive', -1],
+            ['endTime', -1],
             ['startTime', -1]
         ]);
         res.json(sessions);

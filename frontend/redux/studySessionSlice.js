@@ -38,10 +38,10 @@ export const studySessionSlice = createSlice({
                 state.status = 'succeeded';
                 state.sessions = action.payload;
             })
-            .addCase(fetchSessions.rejected), (state, action) => {
+            .addCase(fetchSessions.rejected, (state, action) => {
                 state.status = 'failed';
                 state.error = action.error.message;
-            }
+            })
     }
 });
 

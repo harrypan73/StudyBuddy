@@ -2,8 +2,10 @@ const mongoose = require('mongoose');
 
 const StudySessionSchema = new mongoose.Schema({
     userId: { type: Number, required: true },
+    username: { type: String, required: true }, // Name of user
     startTime: { type: Date, required: true },
     endTime: { type: Date },
+    isActive: { type: Boolean, default: true }, // Indicates if the session is active
     location: { type: String }, // Name of location
     coordinates: {              // Coordinates of location
         lat: { type: Number },

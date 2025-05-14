@@ -60,8 +60,8 @@ router.post('/login', [
             return res.status(400).json({ message: 'Incorrect password' });
         }
 
-        const token = jwt.sign({ id: user.id, username: user.username }, process.env.JWT_SECRET);
-        res.json({ token, user: {id: user.id, username: user.username, email: user.email } });
+        const token = jwt.sign({ id: user.id, username: user.username, profile_image: user.profile_image }, process.env.JWT_SECRET);
+        res.json({ token, user: {id: user.id, username: user.username, profile_image: user.profile_image, email: user.email } });
         console.log("User logged in successfully");
     } catch (err) {
         res.status(500).json({ message: 'Server error' });

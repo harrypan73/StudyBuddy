@@ -79,28 +79,8 @@ export default function MapScreen({ navigation }) {
                 }
                 const { lat, lng } = session.coordinates;
                 
-                // Get the profile image from the server
-                let profile_image = null;
-                try {
-                    const token = AsyncStorage.getItem('token');
-                    if (!token) {
-                        console.error('No token found, cannot fetch profile image');
-                        return null;
-                    }
-                    const response =  axios.get(`http://localhost:5001/api/users/profile_image/${session.userId}`, {
-                        method: 'GET',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${token}`,
-                        },
-                    });
-                    profile_image = response.data.profile_image;
-                } catch (error) {
-                    console.error('Error fetching profile image:', error.message);
-                    // Use a default image if the fetch fails
-                    profile_image = 'https://m.media-amazon.com/images/M/MV5BZDI0MGIzMDctMTdlNS00ZWRhLTgxNzItODMxOTQ5NjdiMjA1XkEyXkFqcGc@._V1_.jpg';
-                }
-
+                const profile_image = session.userProfileImage || 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png';
+                
                 return (
                     <Marker
                         key = { index }
@@ -114,7 +94,6 @@ export default function MapScreen({ navigation }) {
                                     source = {{ uri : profile_image }}
                                     style = { styles.profileImage }
                                 />
-                                {/* <View style = { styles.placeholder} /> */}
                             </View>
                         </View>
                     </Marker>

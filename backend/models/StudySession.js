@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const StudySessionSchema = new mongoose.Schema({
     userId: { type: Number, required: true },
     username: { type: String, required: true }, // Name of user
+    userProfileImage: { type: String }, // URL of user's profile image
     startTime: { type: Date, required: true },
     endTime: { type: Date },
     isActive: { type: Boolean, default: true }, // Indicates if the session is active

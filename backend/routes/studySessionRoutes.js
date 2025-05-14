@@ -6,11 +6,12 @@ const StudySession = require('../models/StudySession');
 // CREATE a new study session
 router.post('/new', authMiddleware, async (req, res) => {
     console.log("Attempting to create a new study session: ", req.body);
-    console.log("User details: ", req.user);
+    // console.log("User details: ", req.user);
     try {
         const session = new StudySession({
             userId: req.user.id,
             username: req.user.username,
+            userProfileImage: req.user.profile_image,
             ...req.body
         });
         await session.save();

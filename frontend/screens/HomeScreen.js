@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Alert, Button, FlatList, StyleSheet, Text, View } from 'react-native';
+import { Alert, Button, FlatList, StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { logoutUser } from '../redux/authSlice';
 import { fetchSessions } from '../redux/studySessionSlice';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { useFocusEffect } from '@react-navigation/native';
+import { useCallback } from 'react';
 
 function formatElapsedTime(startTime, endTime) {
     const elapsedMs = endTime ? (new Date(endTime).getTime() - new Date(startTime).getTime()) 
@@ -15,7 +17,7 @@ function formatElapsedTime(startTime, endTime) {
 
     return (hours > 0 ? `${hours}h ` : '') +
            (minutes > 0 ? `${minutes}m ` : '') +
-           (seconds > 0 ? `${seconds}s` : '');
+            `${seconds}s`;
 }
 
 const SessionCard = ({ session }) => {
@@ -56,25 +58,27 @@ export default function HomeScreen({ navigation, setIsLoggedIn }) {
     // State to trigger re-render every 5 seconds
     const [updateFlag, setUpdateFlag] = useState(false);
 
-    useEffect(() => {
-        dispatch(fetchSessions());
+    // Fetch sessions when the screen is focused
+    useFocusEffect(
+        useCallback(() => {
+            // Fetch sessions when screen is focused
+            dispatch(fetchSessions());
 
-        // Set up the interval to trigger the update every 5 seconds
-        const interval = setInterval(() => {
-            setUpdateFlag(prev => !prev);  // Toggle the flag to trigger rerender
-        }, 5000);
+            // Set up the interval
+            const interval = setInterval(() => {
+                setUpdateFlag(prev => !prev);
+            }, 5000);
 
-        // Clean up the interval when the component unmounts
-        return () => clearInterval(interval);
-    }, [dispatch]);
+            // Clear interval when screen is unfocused
+            return () => clearInterval(interval);
+        }, [dispatch])
+    );
 
     const allSessions = [];
     if (activeSession) {
-        console.log('DISPLAY ACTIVE:', activeSession);
         allSessions.push({...activeSession, _id: 'active-session'});
     }
     allSessions.push(...sessions.map(session => ({...session, _id: session._id})));
-    console.log('DISPLAY ALL SESSIONS:', allSessions);
 
     const handleLogout = () => {
         // Log the user out and navigate to the Login screen
@@ -91,7 +95,19 @@ export default function HomeScreen({ navigation, setIsLoggedIn }) {
 
     return (
         <View style = { styles.container }>
-            <Button title = "Log Out" onPress = {handleLogout} />
+            <View style = {{ flexDirection: 'row', alignItems: 'center', marginVertical: 20 }} >
+                <Text style = { styles.title }>
+                    StudyBuddy
+                </Text>
+                <TouchableOpacity onPress = { handleLogout } style = {{ position: 'absolute', right: '5%' }}>
+                    <MaterialCommunityIcons
+                        name = "logout"
+                        size = { 30 }
+                        color = 'white'
+                    />
+                </TouchableOpacity>
+                {/* <Button title = "Log Out" onPress = {handleLogout} /> */}
+            </View>
             <FlatList
                 style = { styles.sessionList }
                 contentContainerStyle={{  }}
@@ -116,6 +132,13 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         borderColor: 'black',
         backgroundColor: 'black'
+    },
+    title: {
+        fontSize: 30,
+        color: 'white',
+        textAlign: 'center',
+        fontWeight: 'bold',
+        flex: 1
     },
     sessionList: {
         width: '100%',

@@ -24,6 +24,7 @@ export const { loginSuccess, logout } = authSlice.actions;
 
 export const loginUser = (email, password) => async dispatch => {
     try {
+        console.log("Logging in user with email: ", email);
         const res = await axios.post('http://localhost:5001/api/auth/login', { email, password });
         const { token, user } = res.data;
         await AsyncStorage.setItem('token', token);
@@ -41,6 +42,7 @@ export const loginUser = (email, password) => async dispatch => {
 
 export const signupUser = (username, email, password) => async dispatch => {
     try {
+        console.log("Signing up user with email: ", email);
         const res = await axios.post('http://localhost:5001/api/auth/signup', { username, email, password });
         const { token, user } = res.data;
         await AsyncStorage.setItem('token', token);
@@ -57,6 +59,7 @@ export const signupUser = (username, email, password) => async dispatch => {
 }
 
 export const logoutUser = () => async dispatch => {
+    console.log("Logging out user");
     await AsyncStorage.removeItem('token');
     dispatch(logout());
 }

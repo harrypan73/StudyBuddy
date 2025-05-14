@@ -34,4 +34,12 @@ async function getUserByEmail(email) {
     return rows[0];
 }
 
-module.exports = { createUser, getUserByEmail };
+async function getUserById(id) {
+    console.log("Querying for user with id: ", id);
+    const query = ('SELECT * FROM users WHERE id = $1');
+    const values = [id];
+    const { rows } = await pool.query(query, values);
+    return rows[0];
+}
+
+module.exports = { createUser, getUserByEmail, getUserById };

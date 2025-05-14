@@ -95,6 +95,17 @@ router.get('/all', authMiddleware, async (req, res) => {
     } catch (err) {
         res.status(500).json({ message: 'Server error' });
     }
-})
+});
+
+// GET all active study sessions in database
+router.get('/allActive', authMiddleware, async (req, res) => {
+    console.log("Attempting to get all active study sessions in database");
+    try {
+        const sessions = await StudySession.find({ endTime: null });
+        res.json(sessions);
+    } catch (err) {
+        res.status(500).json({ message: 'Server error' });
+    }
+});
 
 module.exports = router;

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Alert, Button, FlatList, StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import { Alert, Button, FlatList, Image, StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { logoutUser } from '../redux/authSlice';
 import { fetchSessions } from '../redux/studySessionSlice';
@@ -27,8 +27,10 @@ const SessionCard = ({ session }) => {
         { backgroundColor: session._id === 'my-active-session' ? '#32AA72' : session.isActive ? '#212836' : '#5C1919' },
     ];
 
+    console.log("Session snapshot URL:", session.snapshotURL);
+
     return (
-        <>
+        <View style = {{ height: 230 }}>
             <View style = { cardStyle }>
                 <View style = { styles.cardLeft }>
                     { session._id === 'my-active-session' && (
@@ -45,26 +47,34 @@ const SessionCard = ({ session }) => {
                     <Text style = { styles.sessionText }>Location:{'\n'}{session.location}</Text>
                 </View>
                 <View style = { styles.cardRight }>
-                    <View style = { styles.emptyPhoto }>
-                        <MaterialCommunityIcons 
-                            name = "camera" 
-                            size = { 50 }
-                            color = 'black'
+                    { !session.snapshotURL ? (
+                        <View style = { styles.emptyPhoto }>
+                            <MaterialCommunityIcons 
+                                name = "camera" 
+                                size = { 50 }
+                                color = 'black'
+                            />
+                            <Text style = {{ color: 'black' }}>No photo</Text>
+                        </View>
+                    ) : (
+                        <Image
+                            source = {{ uri: session.snapshotURL }}
+                            style = {{ width: '100%', height: '80%', borderRadius: 12, borderWidth: 1, borderColor: 'black' }}
+                            resizeMode = 'cover'
                         />
-                        <Text style = {{ color: 'black' }}>No photo</Text>
-                    </View>
+                    )}
                 </View>
             </View>
             { session.isActive && (
                 <View style = { styles.bottomButtonWrapper }>
                     <TouchableOpacity style = { styles.bottomButton }>
                         <Text style = { styles.bottomButtonText }>
-                            { session._id === 'my-active-session' ? session.snapshotURL ? 'End Session' : 'Add Photo' : 'Join Session'}
+                            { session._id === 'my-active-session' ? !session.snapshotURL ? 'Add Photo' : 'End Session' : 'Join Session'}
                         </Text>
                     </TouchableOpacity>
                 </View>
             )}
-        </>
+        </View>
     );
 }
 

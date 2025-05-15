@@ -100,9 +100,6 @@ export default function MapScreen({ navigation }) {
                 )
             })}
         </MapView>
-        // <View style = { styles.container }>
-        //     <Text>Map Screen</Text>
-        // </View>
     );
 }
 

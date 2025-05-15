@@ -24,29 +24,47 @@ const SessionCard = ({ session }) => {
     const elapsedTime = formatElapsedTime(session.startTime, session.endTime);
     const cardStyle = [
         styles.sessionCard,
-        { backgroundColor: session.isActive ? '#32AA72' : '#212836' },
+        { backgroundColor: session._id === 'my-active-session' ? '#32AA72' : session.isActive ? '#212836' : '#5C1919' },
     ];
 
     return (
-        <View style = { cardStyle }>
-            <View style = { styles.cardLeft }>
-                <Text style = { styles.sessionText }>
-                    {session.username.toUpperCase()} {session.isActive ? 'is studying' : 'studied'}
-                </Text>
-                <Text style = { styles.sessionText }>Time Elapsed:{'\n'}{elapsedTime}</Text>
-                <Text style = { styles.sessionText }>Location:{'\n'}{session.location}</Text>
-            </View>
-            <View style = { styles.cardRight }>
-                <View style = { styles.emptyPhoto }>
-                    <MaterialCommunityIcons 
-                        name = "camera" 
-                        size = { 50 }
-                        color = 'black'
-                    />
-                    <Text style = {{ color: 'black' }}>No photo</Text>
+        <>
+            <View style = { cardStyle }>
+                <View style = { styles.cardLeft }>
+                    { session._id === 'my-active-session' && (
+                        <Text style = { styles.sessionText }>
+                            YOU are studying
+                        </Text>
+                    )}
+                    { session._id !== 'my-active-session' && (
+                        <Text style = { styles.sessionText }>
+                            {session.username.toUpperCase()} {session.isActive ? 'is studying' : 'studied'}
+                        </Text>
+                    )}
+                    <Text style = { styles.sessionText }>Time Elapsed:{'\n'}{elapsedTime}</Text>
+                    <Text style = { styles.sessionText }>Location:{'\n'}{session.location}</Text>
+                </View>
+                <View style = { styles.cardRight }>
+                    <View style = { styles.emptyPhoto }>
+                        <MaterialCommunityIcons 
+                            name = "camera" 
+                            size = { 50 }
+                            color = 'black'
+                        />
+                        <Text style = {{ color: 'black' }}>No photo</Text>
+                    </View>
                 </View>
             </View>
-        </View>
+            { session.isActive && (
+                <View style = { styles.bottomButtonWrapper }>
+                    <TouchableOpacity style = { styles.bottomButton }>
+                        <Text style = { styles.bottomButtonText }>
+                            { session._id === 'my-active-session' ? session.snapshotURL ? 'End Session' : 'Add Photo' : 'Join Session'}
+                        </Text>
+                    </TouchableOpacity>
+                </View>
+            )}
+        </>
     );
 }
 
@@ -76,7 +94,7 @@ export default function HomeScreen({ navigation, setIsLoggedIn }) {
 
     const allSessions = [];
     if (activeSession) {
-        allSessions.push({...activeSession, _id: 'active-session'});
+        allSessions.push({...activeSession, _id: 'my-active-session'});
     }
     allSessions.push(...sessions.map(session => ({...session, _id: session._id})));
 
@@ -147,7 +165,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         padding: 16,
         marginVertical: 8,
-        borderRadius: 10,
+        borderRadius: 12,
         width: '90%',
         alignSelf: 'center',
         borderColor: 'white',
@@ -172,11 +190,33 @@ const styles = StyleSheet.create({
     emptyPhoto: {
         width: '100%',
         height: '80%',
-        borderRadius: 10,
+        borderRadius: 12,
         backgroundColor: 'white',
         borderColor: 'black',
         borderWidth: 1,
         justifyContent: 'center',
         alignItems: 'center',
-    }
+    },
+    bottomButtonWrapper: {
+        // flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        width: '100%',
+        paddingHorizontal: 16,
+    },
+    bottomButton: {
+        padding: 10,
+        marginTop: -30,
+        borderRadius: 12,
+        borderWidth: 1,
+        borderColor: 'black',
+        justifyContent: 'center', 
+        alignItems: 'center',
+        backgroundColor: 'white',
+    },
+    bottomButtonText: {
+        color: 'black',
+        backgroundColor: 'white',
+        fontSize: 16,
+    },
 });

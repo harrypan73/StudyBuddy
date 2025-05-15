@@ -17,10 +17,13 @@ export const authSlice = createSlice({
             state.user = null;
             state.token = null;
         },
+        setToken: (state, action) => {
+            state.token = action.payload;
+        }
     },
 });
 
-export const { loginSuccess, logout } = authSlice.actions;
+export const { loginSuccess, logout, setToken } = authSlice.actions;
 
 export const loginUser = (email, password) => async dispatch => {
     try {

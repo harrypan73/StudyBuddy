@@ -42,4 +42,4 @@ async function getUserById(id) {
     return rows[0];
 }
 
-module.exports = { createUser, getUserByEmail, getUserById };
+module.exports = { pool, createUser, getUserByEmail, getUserById };

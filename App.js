@@ -15,6 +15,7 @@ import FriendsScreen from './frontend/screens/FriendsScreen';
 import MapScreen from './frontend/screens/MapScreen';
 
 import { setActiveSession, clearActiveSession } from './frontend/redux/studySessionSlice';
+import { setToken } from './frontend/redux/authSlice';
 
 const Stack = createStackNavigator();
 
@@ -29,9 +30,13 @@ const AppContent = () => {
   useEffect(() => {
     const checkAuth = async () => {
       const token = await AsyncStorage.getItem('token');
+      // if (token) {
+      //   dispatch(setToken(token));
+      // }
       setIsLoggedIn(!!token);
       if (token) {
         console.log("Auto-logged in from past session, starting at route: Home");
+        dispatch(setToken(token));
         setCurrentRoute('Home');
       }
       setLoading(false);

@@ -7,6 +7,7 @@ const mongoose = require('mongoose');
 const authRoutes = require('./routes/authRoutes');
 const studySessionRoutes = require('./routes/studySessionRoutes');
 const userRoutes = require('./routes/userRoutes');
+const friendshipRoutes = require('./routes/friendshipRoutes');
 
 const app = express();
 
@@ -26,6 +27,7 @@ mongoose.connect(process.env.MONGODB_URI)
 app.use('/api/auth', authRoutes);
 app.use('/api/study-sessions', studySessionRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/friendships', friendshipRoutes);
 
 const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

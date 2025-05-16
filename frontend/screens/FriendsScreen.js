@@ -156,38 +156,38 @@ export default function FriendsScreen({ navigation }) {
         const image = item.profile_image || 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png';
 
         return (
-            <View style={styles.cardStyle}>
-                <View style={{ flex: 1.1, justifyContent: 'center', marginLeft: '3%' }}>
-                    <View style={styles.imageWrapper}>
-                        <Image style={styles.profileImage} source={{ uri: image }} />
+            <View style = { styles.cardStyle }>
+                <View style = {{ flex: 1.1, justifyContent: 'center', marginLeft: '3%' }}>
+                    <View style = { styles.imageWrapper }>
+                        <Image style = { styles.profileImage } source = {{ uri: image }} />
                     </View>
                 </View>
-                <View style={{ flex: 3, justifyContent: 'center' }}>
-                    <Text style={styles.username}>{item.username}</Text>
+                <View style = {{ flex: 3, justifyContent: 'center' }}>
+                    <Text style = { styles.username }>{ item.username }</Text>
                 </View>
-                <View style={{ flex: 2, justifyContent: 'center', alignItems: 'center', justifyContent: 'space-evenly' }}>
-                    {section.type === 'request' && (
+                <View style = {{ flex: 2, justifyContent: 'center', alignItems: 'center', justifyContent: 'space-evenly' }}>
+                    { section.type === 'request' && (
                         <>
-                            <TouchableOpacity style = { styles.acceptButton } onPress={() => acceptFriendRequest(item.id)}>
+                            <TouchableOpacity style = { styles.acceptButton } onPress={ () => acceptFriendRequest(item.id) }>
                                 <Text style = { styles.buttonsText }>ACCEPT</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity style = { styles.removeButton } onPress={() => rejectFriendRequest(item.id)}>
+                            <TouchableOpacity style = { styles.removeButton } onPress={ () => rejectFriendRequest(item.id) }>
                                 <Text style = { styles.buttonsText }>DECLINE</Text>
                             </TouchableOpacity>
                         </>
                     )}
-                    {section.type === 'outgoing' && (
-                        <TouchableOpacity style = { styles.removeButton } onPress={() => cancelFriendRequest(item.id)}>
+                    { section.type === 'outgoing' && (
+                        <TouchableOpacity style = { styles.removeButton } onPress = { () => cancelFriendRequest(item.id) }>
                             <Text style = { styles.buttonsText }>CANCEL</Text>
                         </TouchableOpacity>
                     )}
-                    {section.type === 'friend' && (
-                        <TouchableOpacity style = { styles.removeButton } onPress={() => unfriend(item.id)}>
+                    { section.type === 'friend' && (
+                        <TouchableOpacity style = { styles.removeButton } onPress = { () => unfriend(item.id) }>
                             <Text style = { styles.buttonsText }>UNFRIEND</Text>
                         </TouchableOpacity>
                     )}
-                    {section.type === 'search' && (
-                        <TouchableOpacity style = { styles.addFriendButton } onPress={() => sendFriendRequest(item.id)}>
+                    { section.type === 'search' && (
+                        <TouchableOpacity style = { styles.addFriendButton } onPress = { () => sendFriendRequest(item.id) }>
                             <Text style = { styles.buttonsText }>ADD FRIEND</Text>
                         </TouchableOpacity>
                     )}

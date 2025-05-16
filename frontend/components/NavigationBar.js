@@ -10,17 +10,22 @@ import StartModal from './StudySessionModal';
 const Stack = createStackNavigator();
 
 const CustomBottomNavigationBar = ({ navigation, activeSession, openStudySessionModal }) => {
+    const currentRoute = navigation.getState().routes[navigation.getState().index].name;
+    const navigateIfNotCurrent = (targetRoute) => {
+        if (currentRoute !== targetRoute) {
+            navigation.reset({
+                index: 0,
+                routes: [{ name: targetRoute }],
+            });
+        }
+    };
+
     console.log("CustomBottomNavigationBar rendered");
     return (
         <View style = { styles.navBarStyle }>
             <TouchableOpacity 
                 style = { styles.tabStyle }
-                onPress = { () => 
-                    navigation.reset({
-                        index: 0,
-                        routes: [{ name: 'Home' }],
-                    })
-                }
+                onPress = { () => navigateIfNotCurrent('Home') }
             >
                 <MaterialCommunityIcons 
                     name = "home" 
@@ -31,12 +36,7 @@ const CustomBottomNavigationBar = ({ navigation, activeSession, openStudySession
             </TouchableOpacity>
             <TouchableOpacity 
                 style = { styles.tabStyle }
-                onPress = { () => 
-                    navigation.reset({
-                        index: 0,
-                        routes: [{ name: 'Calendar' }],
-                    })
-                }
+                onPress = { () => navigateIfNotCurrent('Calendar') }
             >
                 <MaterialCommunityIcons 
                     name = "calendar" 
@@ -58,12 +58,7 @@ const CustomBottomNavigationBar = ({ navigation, activeSession, openStudySession
             </TouchableOpacity>
             <TouchableOpacity 
                 style = { styles.tabStyle }
-                onPress = { () => 
-                    navigation.reset({
-                        index: 0,
-                        routes: [{ name: 'Friends' }],
-                    })
-                }
+                onPress = { () => navigateIfNotCurrent('Friends') }
             >
                 <MaterialCommunityIcons 
                     name = "account-group" 
@@ -74,12 +69,7 @@ const CustomBottomNavigationBar = ({ navigation, activeSession, openStudySession
             </TouchableOpacity>
             <TouchableOpacity 
                 style = { styles.tabStyle }
-                onPress = { () => 
-                    navigation.reset({
-                        index: 0,
-                        routes: [{ name: 'Map' }],
-                    })
-                }
+                onPress = { () => navigateIfNotCurrent('Map') }
             >
                 <MaterialCommunityIcons 
                     name = "map" 

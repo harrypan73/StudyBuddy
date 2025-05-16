@@ -197,27 +197,30 @@ export default function FriendsScreen({ navigation }) {
     };
 
     return (
-        <View style={styles.container}>
+        <View style = { styles.container }>
             <View style = {{ flexDirection: 'row', alignItems: 'center', marginVertical: 20 }} >
                  <Text style = { styles.title }>
                      Friends
                  </Text>
              </View>
             <TextInput
-                style={styles.input}
-                label="Search"
-                mode="outlined"
-                value={search}
-                onChangeText={setSearch}
-                theme={styles.inputTheme}
+                style = { styles.input }
+                label = "Search"
+                mode = "outlined"
+                value = { search }
+                onChangeText = { setSearch }
+                theme = { styles.inputTheme }
             />
             <SectionList
-                sections={sections}
-                keyExtractor={(item) => item.id}
-                renderItem={renderItem}
-                renderSectionHeader={({ section: { title } }) => (
-                    <Text style={styles.text}>{title}:</Text>
+                style = {{ marginBottom: 100 }}
+                sections = { sections }
+                keyExtractor = { (item) => item.id }
+                renderItem = { renderItem }
+                renderSectionHeader = { ({ section: { title } }) => (
+                    <Text style = { styles.text }>{ title }:</Text>
                 )}
+                stickySectionHeadersEnabled = { false }
+                ListFooterComponent={<View style={{ height: 50 }} /> }
             />
         </View>
     );
@@ -274,7 +277,7 @@ const styles = StyleSheet.create({
         width: '100%',
         height: 80,
         backgroundColor: '#334155',
-        marginVertical: 6,
+        marginVertical: 10,
         borderRadius: 12,
     },
     imageWrapper: {

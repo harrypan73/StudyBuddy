@@ -3,6 +3,7 @@ import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useSelector } from 'react-redux';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import { useNavigationState } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
 import StartModal from './StudySessionModal';
@@ -10,7 +11,7 @@ import StartModal from './StudySessionModal';
 const Stack = createStackNavigator();
 
 const CustomBottomNavigationBar = ({ navigation, activeSession, openStudySessionModal }) => {
-    const currentRoute = navigation.getState().routes[navigation.getState().index].name;
+    const currentRoute = useNavigationState(state => state?.routes[state.index]?.name);
     const navigateIfNotCurrent = (targetRoute) => {
         if (currentRoute !== targetRoute) {
             navigation.reset({

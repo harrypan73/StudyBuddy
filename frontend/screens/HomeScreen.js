@@ -150,6 +150,7 @@ export default function HomeScreen({ navigation, setIsLoggedIn }) {
                 ListEmptyComponent = {() => (
                     <Text>No study sessions found</Text>
                 )}
+                ListFooterComponent={<View style={{ height: 25 }} />}
             />
         </View>
     );
@@ -172,7 +173,7 @@ const styles = StyleSheet.create({
     },
     sessionList: {
         width: '100%',
-        marginBottom: 100
+        marginBottom: 100,
     },
     sessionCard: {
         flexDirection: 'row',

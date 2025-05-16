@@ -146,10 +146,10 @@ export default function FriendsScreen({ navigation }) {
     }
 
     const sections = [
-        requests.length > 0 && { title: 'Friend Requests', data: requests, type: 'request' },
-        outgoingRequests.length > 0 && { title: 'Outgoing Requests', data: outgoingRequests, type: 'outgoing' },
-        friends.length > 0 && { title: 'Friends', data: friends, type: 'friend' },
-        { title: 'Add Friends', data: searchResults, type: 'search' }
+        requests.length > 0 && { title: 'INCOMING REQUESTS', data: requests, type: 'request' },
+        outgoingRequests.length > 0 && { title: 'SENT REQUESTS', data: outgoingRequests, type: 'outgoing' },
+        friends.length > 0 && { title: 'MY FRIENDS', data: friends, type: 'friend' },
+        { title: 'ADD FRIENDS', data: searchResults, type: 'search' }
     ].filter(Boolean);
 
     const renderItem = ({ item, section }) => {
@@ -217,7 +217,7 @@ export default function FriendsScreen({ navigation }) {
                 keyExtractor = { (item) => item.id }
                 renderItem = { renderItem }
                 renderSectionHeader = { ({ section: { title } }) => (
-                    <Text style = { styles.text }>{ title }:</Text>
+                    <Text style = { styles.text }>{ title }</Text>
                 )}
                 stickySectionHeadersEnabled = { false }
                 ListFooterComponent={<View style={{ height: 50 }} /> }
@@ -246,7 +246,6 @@ const styles = StyleSheet.create({
     text: {
         color: 'white',
         fontSize: 18,
-        marginBottom: 10
     },
     username: {
         color: 'white',

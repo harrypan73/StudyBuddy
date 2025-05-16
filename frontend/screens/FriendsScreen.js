@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, FlatList, StyleSheet, Text, TouchableOpacity, View, Image } from 'react-native';
+import { Button, FlatList, SectionList, StyleSheet, Text, TouchableOpacity, View, Image } from 'react-native';
 import { TextInput } from 'react-native-paper';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
@@ -9,6 +9,7 @@ export default function FriendsScreen({ navigation }) {
     const [searchResults, setSearchResults] = useState([]);
     const [friends, setFriends] = useState([]);
     const [requests, setRequests] = useState([]);
+    const [outgoingRequests, setOutgoingRequests] = useState([]);
 
     const token = useSelector(state => state.auth.token);
     console.log('Token:', token);
@@ -18,17 +19,22 @@ export default function FriendsScreen({ navigation }) {
         if (token) {
             fetchFriends();
             fetchRequests();
+            fetchOutgoingRequests();
+            searchUsers();
         }
     }, [token]);
 
     useEffect(() => {
         console.log('Searching users');
-        if (search) {
-            searchUsers();
-        } else {
-            setSearchResults([]);
-        }
+        searchUsers();
     }, [search]);
+
+    const fetchAll = async () => {
+        fetchFriends();
+        fetchRequests();
+        fetchOutgoingRequests();
+        searchUsers();
+    }
 
     const fetchFriends = async () => {
         const response = await axios.get('http://localhost:5001/api/friendships/friends', {
@@ -43,86 +49,179 @@ export default function FriendsScreen({ navigation }) {
         });
         setRequests(response.data);
     };
+
+    const fetchOutgoingRequests = async () => {
+        const response = await axios.get('http://localhost:5001/api/friendships/outgoingRequests', {
+            headers: { Authorization: `Bearer ${token}` }
+        });
+        setOutgoingRequests(response.data);
+    };
     
     const searchUsers = async () => {
         try {
             const response = await axios.get(`http://localhost:5001/api/users/search?username=${search}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
-            setSearchResults(response.data);
+            // Filter out the current friends or requests from the search results
+            const filteredResponse = await axios.post(`http://localhost:5001/api/friendships/filterUnrelated`, {
+                users: response.data
+            }, {
+                headers: { Authorization: `Bearer ${token}` }
+            })
+            setSearchResults(filteredResponse.data);
         } catch (err) {
             console.error('Error searching users:', err);
             setSearchResults([]);
         }
     };
 
-    return (
-        <View style = { styles.container }>
-            <View style = {{ flexDirection: 'row', alignItems: 'center', marginVertical: 20 }} >
-                <Text style = { styles.title }>
-                    Friends
-                </Text>
+    const sendFriendRequest = async (recipientId) => {
+        try {
+            const response = await axios.post('http://localhost:5001/api/friendships/send', {
+                recipientId
+            }, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            console.log('Friend request sent:', response.data);
+            fetchAll();
+        } catch (err) {
+            console.error('Error sending friend request:', err);
+        }
+    };
+
+    const cancelFriendRequest = async (recipientId) => {
+        try {
+            const response = await axios.post('http://localhost:5001/api/friendships/cancel', {
+                recipientId
+            }, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            console.log('Friend request cancelled:', response.data);
+            fetchAll();
+        } catch (err) {
+            console.error('Error cancelling friend request:', err);
+        }
+    }
+
+    const acceptFriendRequest = async (requesterId) => {
+        try {
+            const response = await axios.post('http://localhost:5001/api/friendships/accept', {
+                requesterId
+            }, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            console.log('Friend request accepted:', response.data);
+            fetchAll();
+        } catch (err) {
+            console.error('Error accepting friend request:', err);
+        }
+    }
+
+    const rejectFriendRequest = async (requesterId) => {
+        try {
+            const response = await axios.post('http://localhost:5001/api/friendships/reject', {
+                requesterId
+            }, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            console.log('Friend request rejected:', response.data);
+            fetchAll();
+        } catch (err) {
+            console.error('Error rejecting friend request:', err);
+        }
+    };
+
+    const unfriend = async (friendId) => {
+        try {
+            const response = await axios.post('http://localhost:5001/api/friendships/unfriend', {
+                friendId
+            }, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            console.log('Unfriended:', response.data);
+            fetchAll();
+        } catch (err) {
+            console.error('Error unfriending:', err);
+        }
+    }
+
+    const sections = [
+        requests.length > 0 && { title: 'Friend Requests', data: requests, type: 'request' },
+        outgoingRequests.length > 0 && { title: 'Outgoing Requests', data: outgoingRequests, type: 'outgoing' },
+        friends.length > 0 && { title: 'Friends', data: friends, type: 'friend' },
+        { title: 'Add Friends', data: searchResults, type: 'search' }
+    ].filter(Boolean);
+
+    const renderItem = ({ item, section }) => {
+        const image = item.profile_image || 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png';
+
+        return (
+            <View style={styles.cardStyle}>
+                <View style={{ flex: 1.1, justifyContent: 'center', marginLeft: '3%' }}>
+                    <View style={styles.imageWrapper}>
+                        <Image style={styles.profileImage} source={{ uri: image }} />
+                    </View>
+                </View>
+                <View style={{ flex: 3, justifyContent: 'center' }}>
+                    <Text style={styles.username}>{item.username}</Text>
+                </View>
+                <View style={{ flex: 2, justifyContent: 'center', alignItems: 'center', justifyContent: 'space-evenly' }}>
+                    {section.type === 'request' && (
+                        <>
+                            <TouchableOpacity style = { styles.acceptButton } onPress={() => acceptFriendRequest(item.id)}>
+                                <Text style = { styles.buttonsText }>ACCEPT</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style = { styles.removeButton } onPress={() => rejectFriendRequest(item.id)}>
+                                <Text style = { styles.buttonsText }>DECLINE</Text>
+                            </TouchableOpacity>
+                        </>
+                    )}
+                    {section.type === 'outgoing' && (
+                        <TouchableOpacity style = { styles.removeButton } onPress={() => cancelFriendRequest(item.id)}>
+                            <Text style = { styles.buttonsText }>CANCEL</Text>
+                        </TouchableOpacity>
+                    )}
+                    {section.type === 'friend' && (
+                        <TouchableOpacity style = { styles.removeButton } onPress={() => unfriend(item.id)}>
+                            <Text style = { styles.buttonsText }>UNFRIEND</Text>
+                        </TouchableOpacity>
+                    )}
+                    {section.type === 'search' && (
+                        <TouchableOpacity style = { styles.addFriendButton } onPress={() => sendFriendRequest(item.id)}>
+                            <Text style = { styles.buttonsText }>ADD FRIEND</Text>
+                        </TouchableOpacity>
+                    )}
+                </View>
             </View>
+        );
+    };
+
+    return (
+        <View style={styles.container}>
+            <View style = {{ flexDirection: 'row', alignItems: 'center', marginVertical: 20 }} >
+                 <Text style = { styles.title }>
+                     Friends
+                 </Text>
+             </View>
             <TextInput
-                style = { styles.input }
-                label = "Search"
-                mode = "outlined"
-                value = { search }
-                onChangeText = { setSearch }
-                theme = { styles.inputTheme }
+                style={styles.input}
+                label="Search"
+                mode="outlined"
+                value={search}
+                onChangeText={setSearch}
+                theme={styles.inputTheme}
             />
-            { requests.length > 0 && (
-                <>
-                    <Text style = { styles.text }>Friend Requests:</Text>
-                    <FlatList
-                        data = { requests }
-                        keyExtractor = { item => item.id }
-                        renderItem = { ({ item }) => (
-                            <View style = {{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                                <Text>{item.username}</Text>
-                                <Button title = 'Accept' onPress = { () => {} } />
-                            </View>
-                        )}
-                    />
-                </>
-            )}
-            <Text style = { styles.text }>Friends:</Text>
-            <FlatList
-                data = { friends }
-                keyExtractor = { item => item.id }
-                renderItem = { ({ item }) => (
-                    <View style = {{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                        <Text>{item.username}</Text>
-                        <Button title = 'Message' onPress = { () => {} } />
-                    </View>
-                )}
-            />
-            <Text style = { styles.text }>Search Results:</Text>
-            <FlatList
-                style = { styles.searchResultList }
-                data = { searchResults }
-                keyExtractor = { item => item.id }
-                renderItem = { ({ item }) => (
-                    <View style = { styles.searchResultCard }>
-                        <View style = {{ flex: 1.1, justifyContent: 'center', marginLeft: '1.5%' }}>
-                            <View style = { styles.imageWrapper }>
-                                <Image
-                                    style = { styles.profileImage }
-                                    source = {{ uri: item.profile_image || 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png' }}
-                                />
-                            </View>
-                        </View>
-                        <View style = {{ flex: 3, justifyContent: 'center',  }}>
-                            <Text style = { styles.username }>{item.username}</Text>
-                        </View>
-                        <View style = {{ flex: 2, justifyContent: 'center', alignItems: 'center' }}>
-                            <Button title = 'Add Friend' onPress = { () => {} } />
-                        </View>
-                    </View>
+            <SectionList
+                sections={sections}
+                keyExtractor={(item) => item.id}
+                renderItem={renderItem}
+                renderSectionHeader={({ section: { title } }) => (
+                    <Text style={styles.text}>{title}:</Text>
                 )}
             />
         </View>
     );
+
 }
 
 const styles = StyleSheet.create({
@@ -130,8 +229,8 @@ const styles = StyleSheet.create({
         paddingTop: 50,
         paddingHorizontal: 20,
         flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
+        // justifyContent: 'center',
+        // alignItems: 'center',
         backgroundColor: 'black'
     },
     title: {
@@ -165,17 +264,17 @@ const styles = StyleSheet.create({
         },
         roundness: 12
     },
-    searchResultList: {
+    listStyle: {
         width: '100%',
-        marginBottom: 20
+        borderWidth: 1,
+        borderColor: 'white'
     },
-    searchResultCard: {
+    cardStyle: {
         flexDirection: 'row',
         width: '100%',
-        height: 60,
+        height: 80,
         backgroundColor: '#334155',
-        marginTop: 6,
-        marginBottom: 20,
+        marginVertical: 6,
         borderRadius: 12,
     },
     imageWrapper: {
@@ -193,6 +292,30 @@ const styles = StyleSheet.create({
     profileImage: {
         width: '100%',
         height: '100%',
-        resideMode: 'cover',
+        resizeMode: 'cover',
+    },
+    buttonsText: {
+        color: 'white',
+    },
+    acceptButton: {
+        backgroundColor: '#4FE0B2',
+        borderRadius: 12,
+        padding: 5,
+        alignItems: 'center',
+        width: '80%'
+    },
+    removeButton: {
+        backgroundColor: '#FA7070',
+        borderRadius: 12,
+        padding: 5,
+        alignItems: 'center',
+        width: '80%'
+    },
+    addFriendButton: {
+        backgroundColor: '#88D069',
+        borderRadius: 12,
+        padding: 5,
+        alignItems: 'center',
+        width: '80%'
     },
 });

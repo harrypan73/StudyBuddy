@@ -18,7 +18,10 @@ export default function LoginScreen({ navigation, setIsLoggedIn }) {
         dispatch(loginUser(email, password))
             .then(() => {
                 setIsLoggedIn(true);
-                navigation.navigate('Home');
+                navigation.reset({
+                    index: 0,
+                    routes: [{ name: 'Home' }],
+                })
             })
             .catch((err) => {
                 console.error(err);
@@ -69,7 +72,12 @@ export default function LoginScreen({ navigation, setIsLoggedIn }) {
                 contentStyle = {{ height: 60 }}
                 labelStyle = {{ fontSize: 20 }}
                 mode = "contained"
-                onPress = {() => navigation.navigate('Signup')}
+                onPress = {() => 
+                    navigation.reset({
+                        index: 0,
+                        routes: [{ name: 'Signup' }],
+                    })
+                }
             >
                 Sign Up
             </Button>

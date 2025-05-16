@@ -113,7 +113,10 @@ export default function HomeScreen({ navigation, setIsLoggedIn }) {
         dispatch(logoutUser())
             .then(() => {
                 setIsLoggedIn(false);
-                navigation.navigate('Login');
+                navigation.reset({
+                    index: 0,
+                    routes: [{ name: 'Login' }],
+                })
             })
             .catch((err) => {
                 console.error(err);

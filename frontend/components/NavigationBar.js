@@ -15,7 +15,12 @@ const CustomBottomNavigationBar = ({ navigation, activeSession, openStudySession
         <View style = { styles.navBarStyle }>
             <TouchableOpacity 
                 style = { styles.tabStyle }
-                onPress = { () => navigation.navigate('Home')}
+                onPress = { () => 
+                    navigation.reset({
+                        index: 0,
+                        routes: [{ name: 'Home' }],
+                    })
+                }
             >
                 <MaterialCommunityIcons 
                     name = "home" 
@@ -26,7 +31,12 @@ const CustomBottomNavigationBar = ({ navigation, activeSession, openStudySession
             </TouchableOpacity>
             <TouchableOpacity 
                 style = { styles.tabStyle }
-                onPress = { () => navigation.navigate('Calendar')}
+                onPress = { () => 
+                    navigation.reset({
+                        index: 0,
+                        routes: [{ name: 'Calendar' }],
+                    })
+                }
             >
                 <MaterialCommunityIcons 
                     name = "calendar" 
@@ -48,7 +58,12 @@ const CustomBottomNavigationBar = ({ navigation, activeSession, openStudySession
             </TouchableOpacity>
             <TouchableOpacity 
                 style = { styles.tabStyle }
-                onPress = { () => navigation.navigate('Friends')}
+                onPress = { () => 
+                    navigation.reset({
+                        index: 0,
+                        routes: [{ name: 'Friends' }],
+                    })
+                }
             >
                 <MaterialCommunityIcons 
                     name = "account-group" 
@@ -59,7 +74,12 @@ const CustomBottomNavigationBar = ({ navigation, activeSession, openStudySession
             </TouchableOpacity>
             <TouchableOpacity 
                 style = { styles.tabStyle }
-                onPress = { () => navigation.navigate('Map')}
+                onPress = { () => 
+                    navigation.reset({
+                        index: 0,
+                        routes: [{ name: 'Map' }],
+                    })
+                }
             >
                 <MaterialCommunityIcons 
                     name = "map" 

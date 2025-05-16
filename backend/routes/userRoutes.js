@@ -23,7 +23,17 @@ router.get('/search', authMiddleware, async (req, res) => {
     const currentUserId = req.user.id;
 
     if (!searchQuery || searchQuery.trim() === '') {
-        return res.status(400).json({ message: 'Search query cannot be empty' });
+        // If no search query is provided, return 10 random users
+        const query = `
+            SELECT id, username, profile_image
+            FROM users
+            WHERE id != $1
+            ORDER BY RANDOM()
+            LIMIT 10
+        `;
+        const values = [currentUserId];
+        const { rows } = await pool.query(query, values);
+        return res.json(rows);
     };
 
     try {

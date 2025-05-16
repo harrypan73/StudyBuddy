@@ -23,7 +23,10 @@ export default function SignupScreen({ navigation }) {
         // Sign the user up and navigate to the Home screen
         dispatch(signupUser(username, email, password))
             .then(() => {
-                navigation.navigate('Home');
+                navigation.reset({
+                    index: 0,
+                    routes: [{ name: 'Home' }],
+                })
             })
             .catch((err) => {
                 console.error(err);
@@ -91,7 +94,12 @@ export default function SignupScreen({ navigation }) {
                 contentStyle = {{ height: 60 }}
                 labelStyle = {{ fontSize: 20 }}
                 mode = "contained"
-                onPress = {() => navigation.navigate('Login')}
+                onPress = {() => 
+                    navigation.reset({
+                        index: 0,
+                        routes: [{ name: 'Login' }],
+                    })
+                }
             >
                 Log In To Existing Account
             </Button>
